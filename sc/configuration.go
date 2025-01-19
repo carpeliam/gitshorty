@@ -59,9 +59,9 @@ type Configuration struct {
 
 func NewConfiguration() *Configuration {
 	cfg := &Configuration{
-		BasePath:      "https://api.app.shortcut.com/",
+		BasePath:      "https://api.app.shortcut.com",
 		DefaultHeader: make(map[string]string),
-		UserAgent:     "Swagger-Codegen/1.0.0/go",
+		UserAgent:     "gitshorty/0.0.1",
 	}
 	return cfg
 }
