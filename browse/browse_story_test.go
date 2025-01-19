@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/carpeliam/gitshorty/browse"
-	"github.com/carpeliam/gitshorty/sc"
+	sc "github.com/carpeliam/gitshorty/generated"
 )
 
 type MockGitRepository struct {

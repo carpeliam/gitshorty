@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/carpeliam/gitshorty/sc"
+	sc "github.com/carpeliam/gitshorty/generated"
 )
 
 type Backlog interface {
