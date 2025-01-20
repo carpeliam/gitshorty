@@ -35,17 +35,45 @@ var _ = Describe("Git", func() {
 		Expect(branchNames).To(Equal([]string{"main", "current-branch-sc-123"}))
 	})
 
+	It("can list remote branches", func() {
+		os.Setenv("GITSHORTY_TEST_CURRENT_BRANCH", "main")
+		os.Setenv("GITSHORTY_TEST_REMOTE_BRANCHES", "origin/main:upstream/current-branch-sc-123")
+		branchNames := git.NewRepository().GetRemoteBranchNames()
+		Expect(branchNames).To(Equal([]string{"origin/main", "upstream/current-branch-sc-123"}))
+	})
+
 	It("can delete a local branch", func() {
 		os.Setenv("GITSHORTY_TEST_CURRENT_BRANCH", "main")
 		os.Setenv("GITSHORTY_TEST_LOCAL_BRANCHES", "main:current-branch-sc-123")
-		err := git.NewRepository().DeleteBranch("current-branch-sc-123")
+		err := git.NewRepository().DeleteLocalBranch("current-branch-sc-123")
 		Expect(err).To(BeNil())
 	})
 
 	It("fails to delete a non-existent local branch", func() {
 		os.Setenv("GITSHORTY_TEST_CURRENT_BRANCH", "main")
 		os.Setenv("GITSHORTY_TEST_LOCAL_BRANCHES", "main:current-branch-sc-123")
-		err := git.NewRepository().DeleteBranch("current-branch-sc-456")
+		err := git.NewRepository().DeleteLocalBranch("current-branch-sc-456")
+		Expect(err).NotTo(BeNil())
+	})
+
+	It("can delete a remote branch", func() {
+		os.Setenv("GITSHORTY_TEST_CURRENT_BRANCH", "main")
+		os.Setenv("GITSHORTY_TEST_REMOTE_BRANCHES", "origin/main:upstream/current-branch-sc-123")
+		err := git.NewRepository().DeleteRemoteBranch("upstream/current-branch-sc-123")
+		Expect(err).To(BeNil())
+	})
+
+	It("can delete a remote branch with a slash in its name", func() {
+		os.Setenv("GITSHORTY_TEST_CURRENT_BRANCH", "main")
+		os.Setenv("GITSHORTY_TEST_REMOTE_BRANCHES", "origin/feature/sc-123")
+		err := git.NewRepository().DeleteRemoteBranch("origin/feature/sc-123")
+		Expect(err).To(BeNil())
+	})
+
+	It("fails to delete a non-existent remote branch", func() {
+		os.Setenv("GITSHORTY_TEST_CURRENT_BRANCH", "main")
+		os.Setenv("GITSHORTY_TEST_REMOTE_BRANCHES", "origin/main:upstream/current-branch-sc-123")
+		err := git.NewRepository().DeleteRemoteBranch("upstream/current-branch-sc-456")
 		Expect(err).NotTo(BeNil())
 	})
 })

@@ -15,12 +15,25 @@ case "${args}" in
             echo "$branch"
         done
         ;;
+    "--no-pager branch --remote --format='%(refname:short)'")
+        IFS=':' read -ra REMOTE_BRANCHES <<< "$GITSHORTY_TEST_REMOTE_BRANCHES"
+        for branch in "${REMOTE_BRANCHES[@]}"
+        do
+            echo "$branch"
+        done
+        ;;
     "branch -D "*)
         branchName=${args:10}
-        echo ":${branchName}:"
-        echo ":${GITSHORTY_TEST_LOCAL_BRANCHES}:"
         if [[ ! ":${GITSHORTY_TEST_LOCAL_BRANCHES}:" =~ ":${branchName}:" ]]; then
             echo "error: branch '$branchName' not found."
+            exit 1
+        fi
+        ;;
+    "push --delete "*)
+        remoteSpaceBranch=${args:14}
+        remoteSlashBranch=${remoteSpaceBranch/ /\/}
+        if [[ ! ":${GITSHORTY_TEST_REMOTE_BRANCHES}:" =~ ":${remoteSlashBranch}:" ]]; then
+            echo "error: unable to delete '$remoteSlashBranch': remote ref does not exist"
             exit 1
         fi
         ;;

@@ -3,10 +3,11 @@ package support
 import sc "github.com/carpeliam/gitshorty/generated"
 
 type MockGitRepository struct {
-	CurrentBranchName string
-	LocalBranchNames  []string
-	RemoteBranchNames []string
-	DeletedBranches   []string
+	CurrentBranchName     string
+	LocalBranchNames      []string
+	RemoteBranchNames     []string
+	DeletedLocalBranches  []string
+	DeletedRemoteBranches []string
 }
 
 func (repository MockGitRepository) GetCurrentBranchName() string {
@@ -21,8 +22,13 @@ func (repository MockGitRepository) GetRemoteBranchNames() []string {
 	return repository.RemoteBranchNames
 }
 
-func (repository *MockGitRepository) DeleteBranch(branchName string) error {
-	repository.DeletedBranches = append(repository.DeletedBranches, branchName)
+func (repository *MockGitRepository) DeleteLocalBranch(branchName string) error {
+	repository.DeletedLocalBranches = append(repository.DeletedLocalBranches, branchName)
+	return nil
+}
+
+func (repository *MockGitRepository) DeleteRemoteBranch(branchName string) error {
+	repository.DeletedRemoteBranches = append(repository.DeletedRemoteBranches, branchName)
 	return nil
 }
 

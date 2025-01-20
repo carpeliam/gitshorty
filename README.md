@@ -1,6 +1,7 @@
 # gitshorty
 A [Shortcut](https://www.shortcut.com) Command-Line tool that works within git branches that contain an associated story ID as the suffix, e.g. `branchname-sc-123`.
 ## Usage
+Usage for individual commands can be found in the [wiki](https://github.com/carpeliam/gitshorty/wiki/Usage).
 ```
 NAME:
    sc - command-line client for Shortcut
@@ -9,10 +10,11 @@ USAGE:
    sc [global options] command [command options]
 
 VERSION:
-   0.0.1
+   0.0.2
 
 COMMANDS:
    browse   open story associated with current branch in web browser
+   clean    delete local branches associated with delivered stories
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:

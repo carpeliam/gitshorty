@@ -8,7 +8,9 @@ import (
 type Repository interface {
 	GetCurrentBranchName() string
 	GetLocalBranchNames() []string
-	DeleteBranch(branchName string) error
+	GetRemoteBranchNames() []string
+	DeleteLocalBranch(branchName string) error
+	DeleteRemoteBranch(branchName string) error
 }
 
 type GitRepository struct{}
@@ -24,8 +26,21 @@ func (repository GitRepository) GetLocalBranchNames() []string {
 	return strings.Split(strings.TrimSpace(string(output)), "\n")
 }
 
-func (repository GitRepository) DeleteBranch(branchName string) error {
+func (repository GitRepository) GetRemoteBranchNames() []string {
+	output, _ := exec.Command("git", "--no-pager", "branch", "--remote", "--format='%(refname:short)'").Output()
+	return strings.Split(strings.TrimSpace(string(output)), "\n")
+}
+
+func (repository GitRepository) DeleteLocalBranch(branchName string) error {
 	_, err := exec.Command("git", "branch", "-D", branchName).Output()
+	return err
+}
+
+func (repository GitRepository) DeleteRemoteBranch(remoteBranchName string) error {
+	remoteAndBranch := strings.SplitN(remoteBranchName, "/", 2)
+	remote := remoteAndBranch[0]
+	branch := remoteAndBranch[1]
+	_, err := exec.Command("git", "push", "--delete", remote, branch).Output()
 	return err
 }
 

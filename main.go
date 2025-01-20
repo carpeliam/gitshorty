@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"log/slog"
 	"os"
 
+	"github.com/Songmu/prompter"
 	"github.com/carpeliam/gitshorty/browse"
 	"github.com/carpeliam/gitshorty/clean"
 	"github.com/carpeliam/gitshorty/git"
@@ -43,16 +45,42 @@ func main() {
 				Usage: "delete local branches associated with delivered stories",
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
-						Name:     "force",
-						Aliases:  []string{"f"},
-						Usage:    "currently required in order to delete local branches",
-						Required: true,
+						Name:    "confirm",
+						Aliases: []string{"c", "y"},
+						Usage:   "auto-confirm deletion, without prompting",
+					},
+					&cli.BoolFlag{
+						Name:  "dry-run",
+						Usage: "print out branches that would be deleted",
+					},
+					&cli.BoolFlag{
+						Name:  "local",
+						Usage: "delete local branches",
+						Value: true,
+					},
+					&cli.BoolFlag{
+						Name:  "remote",
+						Usage: "delete remote branches",
+						Value: false,
 					},
 				},
 				Action: func(ctx *cli.Context) error {
+					if !ctx.Bool("local") && !ctx.Bool("remote") {
+						return errors.New("must specify at least one of --local or --remote")
+					}
+					if !ctx.Bool("dry-run") && !ctx.Bool("confirm") {
+						shouldContinue := prompter.YesNo("This is a destructive operation. Are you sure you want to continue? You can supply --dry-run to see what would be deleted without actually deleting anything, or --confirm to skip this prompt in the future.", false)
+						if !shouldContinue {
+							return nil
+						}
+					}
 					git := git.NewRepository()
 					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
-					deletedBranches, err := clean.CleanLocalBranches(git, shortcutClient)
+					deletedBranches, err := clean.CleanBranches(git, shortcutClient, clean.CleanOpts{
+						DryRun:                ctx.Bool("dry-run"),
+						IncludeLocalBranches:  ctx.Bool("local"),
+						IncludeRemoteBranches: ctx.Bool("remote"),
+					})
 					if err == nil {
 						slog.Info("Deleted branches", "branches", deletedBranches)
 					}
