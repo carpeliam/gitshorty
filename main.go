@@ -5,14 +5,15 @@ import (
 	"os"
 
 	"github.com/carpeliam/gitshorty/browse"
+	"github.com/carpeliam/gitshorty/version"
 	"github.com/urfave/cli/v2"
 )
 
 func main() {
 	app := &cli.App{
 		Name:                 "sc",
-		Usage:                "command line client for Shortcut",
-		Version:              "0.0.1",
+		Usage:                "command-line client for Shortcut",
+		Version:              version.Version,
 		EnableBashCompletion: true,
 		Commands: []*cli.Command{
 			{

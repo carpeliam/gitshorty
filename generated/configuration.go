@@ -9,7 +9,10 @@
 package sc
 
 import (
+	"fmt"
 	"net/http"
+
+	"github.com/carpeliam/gitshorty/version"
 )
 
 // contextKeys are used to identify the type of value in the context.
@@ -61,7 +64,7 @@ func NewConfiguration() *Configuration {
 	cfg := &Configuration{
 		BasePath:      "https://api.app.shortcut.com",
 		DefaultHeader: make(map[string]string),
-		UserAgent:     "gitshorty/0.0.1",
+		UserAgent:     fmt.Sprintf("gitshorty/%s", version.Version),
 	}
 	return cfg
 }

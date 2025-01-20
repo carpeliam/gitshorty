@@ -1,7 +1,6 @@
 # gitshorty
-## Usage
 A [Shortcut](https://www.shortcut.com) Command-Line tool that works within git branches that contain an associated story ID as the suffix, e.g. `branchname-sc-123`.
-
+## Usage
 ```
 NAME:
    sc - command line client for Shortcut
