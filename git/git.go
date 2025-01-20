@@ -22,12 +22,12 @@ func (repository GitRepository) GetCurrentBranchName() string {
 }
 
 func (repository GitRepository) GetLocalBranchNames() []string {
-	output, _ := exec.Command("git", "--no-pager", "branch", "--format='%(refname:short)'").Output()
+	output, _ := exec.Command("git", "--no-pager", "branch", "--format=%(refname:short)").Output()
 	return strings.Split(strings.TrimSpace(string(output)), "\n")
 }
 
 func (repository GitRepository) GetRemoteBranchNames() []string {
-	output, _ := exec.Command("git", "--no-pager", "branch", "--remote", "--format='%(refname:short)'").Output()
+	output, _ := exec.Command("git", "--no-pager", "branch", "--remote", "--format=%(refname:short)").Output()
 	return strings.Split(strings.TrimSpace(string(output)), "\n")
 }
 

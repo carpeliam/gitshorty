@@ -8,14 +8,14 @@ case "${args}" in
     "rev-parse --abbrev-ref HEAD")
         echo $GITSHORTY_TEST_CURRENT_BRANCH
         ;;
-    "--no-pager branch --format='%(refname:short)'")
+    "--no-pager branch --format=%(refname:short)")
         IFS=':' read -ra LOCAL_BRANCHES <<< "$GITSHORTY_TEST_LOCAL_BRANCHES"
         for branch in "${LOCAL_BRANCHES[@]}"
         do
             echo "$branch"
         done
         ;;
-    "--no-pager branch --remote --format='%(refname:short)'")
+    "--no-pager branch --remote --format=%(refname:short)")
         IFS=':' read -ra REMOTE_BRANCHES <<< "$GITSHORTY_TEST_REMOTE_BRANCHES"
         for branch in "${REMOTE_BRANCHES[@]}"
         do
