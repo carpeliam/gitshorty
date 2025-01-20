@@ -20,5 +20,8 @@ jobs:
     - name: Build
       run: go build -v ./...
 
+    - name: Mod tidy
+      run: go mod tidy && git diff --exit-code go.mod go.sum
+
     - name: Test
       run: go test -v ./...
