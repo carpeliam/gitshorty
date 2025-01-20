@@ -16,7 +16,7 @@ type ShortcutReader struct {
 	auth   context.Context
 }
 
-func NewShortcutReader(apiToken string) ShortcutReader {
+func NewShortcutReader(apiToken string) Backlog {
 	cfg := sc.NewConfiguration()
 	client := sc.NewAPIClient(cfg)
 	auth := context.WithValue(context.Background(), sc.ContextAPIKey, sc.APIKey{Key: apiToken})

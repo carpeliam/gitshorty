@@ -17,6 +17,6 @@ func (repository GitRepository) GetCurrentBranchName() string {
 	return strings.TrimSpace(string(output))
 }
 
-func NewRepository() GitRepository {
+func NewRepository() Repository {
 	return GitRepository{}
 }

@@ -10,7 +10,7 @@ func getStoryId(branchName string) (int, error) {
 	re := regexp.MustCompile(`sc-(\d+)$`)
 	match := re.FindStringSubmatch(branchName)
 	if len(match) != 2 {
-		return 0, fmt.Errorf("story id not found in branch name %s", branchName)
+		return 0, fmt.Errorf("story ID not found in branch name '%s'", branchName)
 	}
 	return strconv.Atoi(match[1])
 }
