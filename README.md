@@ -1,4 +1,5 @@
 # gitshorty
+## Usage
 A [Shortcut](https://www.shortcut.com) Command-Line tool that works within git branches that contain an associated story ID as the suffix, e.g. `branchname-sc-123`.
 
 ```
@@ -18,6 +19,18 @@ COMMANDS:
 GLOBAL OPTIONS:
    --help, -h     show help
    --version, -v  print the version
+```
+
+## Installation
+### Via Homebrew
+```
+brew install carpeliam/brew/gitshorty
+```
+
+### From source
+The source is at least compatible with Go v1.23.1, and can be built as follows:
+```
+go build -o sc .
 ```
 
 ## Configuration
