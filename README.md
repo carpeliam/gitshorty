@@ -3,7 +3,7 @@ A [Shortcut](https://www.shortcut.com) Command-Line tool that works within git b
 ## Usage
 ```
 NAME:
-   sc - command line client for Shortcut
+   sc - command-line client for Shortcut
 
 USAGE:
    sc [global options] command [command options]
@@ -16,8 +16,9 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h     show help
-   --version, -v  print the version
+   --api-token value  API Token to use with Shortcut API [$SHORTCUT_API_TOKEN]
+   --help, -h         show help
+   --version, -v      print the version
 ```
 
 ## Installation
@@ -33,8 +34,12 @@ go build -o sc .
 ```
 
 ## Configuration
-`gitshorty` requires an [API Token](https://help.shortcut.com/hc/en-us/articles/205701199-Shortcut-API-Tokens), defined as an environment variable:
+`gitshorty` requires an [API Token](https://help.shortcut.com/hc/en-us/articles/205701199-Shortcut-API-Tokens). You can either define it as an environment variable or as a global option for `sc`:
 
 ```sh
-SHORTCUT_API_TOKEN="1351e67f-993e-4656-b001-a3842d1354e2"
+# As a global option
+sc --api-token 1351e67f-993e-4656-b001-a3842d1354e2 browse
+# As an environment variable
+export SHORTCUT_API_TOKEN="1351e67f-993e-4656-b001-a3842d1354e2"
+sc browse
 ```

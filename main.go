@@ -15,15 +15,23 @@ func main() {
 		Usage:                "command-line client for Shortcut",
 		Version:              version.Version,
 		EnableBashCompletion: true,
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:     "api-token",
+				Usage:    "API Token to use with Shortcut API",
+				EnvVars:  []string{"SHORTCUT_API_TOKEN"},
+				Required: true,
+			},
+		},
 		Commands: []*cli.Command{
 			{
 				Name:  "browse",
 				Usage: "open story associated with current branch in web browser",
-				Action: func(*cli.Context) error {
-					apiToken := os.Getenv("SHORTCUT_API_TOKEN")
+				Action: func(ctx *cli.Context) error {
+					apiToken := ctx.String("api-token")
+					git := browse.NewRepository()
 					shortcut := browse.NewShortcutReader(apiToken)
 					browser := browse.NewBrowser()
-					git := browse.NewRepository()
 					return browse.BrowseStory(git, shortcut, browser)
 				},
 			},
