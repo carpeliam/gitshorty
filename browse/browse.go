@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+
+	"github.com/carpeliam/gitshorty/git"
+	"github.com/carpeliam/gitshorty/shortcut"
+	"github.com/carpeliam/gitshorty/usecases"
 )
 
 func getStoryId(branchName string) (int, error) {
@@ -15,16 +19,15 @@ func getStoryId(branchName string) (int, error) {
 	return strconv.Atoi(match[1])
 }
 
-func BrowseStory(repository Repository, backlog Backlog, browser Browser) error {
-	branch := repository.GetCurrentBranchName()
-	storyId, error := getStoryId(branch)
-	if error != nil {
-		return error
+func BrowseStory(repository git.Repository, shortcutClient shortcut.Client, browser Browser) error {
+	currentBranch := repository.GetCurrentBranchName()
+	story, err := usecases.GetStoryByBranchName(currentBranch, shortcutClient)
+	if err != nil {
+		return err
 	}
-	story, error := backlog.GetStory(storyId)
-	if error != nil {
-		return error
+	if story == nil {
+		return fmt.Errorf("story not found for branch '%s'", currentBranch)
 	}
-	_, error = browser.OpenURL(story.AppUrl)
-	return error
+	_, err = browser.OpenURL(story.AppUrl)
+	return err
 }

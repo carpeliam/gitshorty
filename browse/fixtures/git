@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -eu
-
-args=$*
-
-if [ "${args}" = "rev-parse --abbrev-ref HEAD" ]; then
-    echo $GITSHORTY_TEST_CURRENT_BRANCH
-fi

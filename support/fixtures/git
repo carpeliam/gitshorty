@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -eu
+
+args=$*
+
+case "${args}" in
+    "rev-parse --abbrev-ref HEAD")
+        echo $GITSHORTY_TEST_CURRENT_BRANCH
+        ;;
+    "--no-pager branch --format='%(refname:short)'")
+        IFS=':' read -ra LOCAL_BRANCHES <<< "$GITSHORTY_TEST_LOCAL_BRANCHES"
+        for branch in "${LOCAL_BRANCHES[@]}"
+        do
+            echo "$branch"
+        done
+        ;;
+    "branch -D "*)
+        branchName=${args:10}
+        echo ":${branchName}:"
+        echo ":${GITSHORTY_TEST_LOCAL_BRANCHES}:"
+        if [[ ! ":${GITSHORTY_TEST_LOCAL_BRANCHES}:" =~ ":${branchName}:" ]]; then
+            echo "error: branch '$branchName' not found."
+            exit 1
+        fi
+        ;;
+    *)
+        echo "Unknown command: '${args}'"
+        exit 1
+        ;;
+esac
