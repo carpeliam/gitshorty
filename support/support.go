@@ -33,9 +33,18 @@ func (repository *MockGitRepository) DeleteRemoteBranch(branchName string) error
 }
 
 type MockShortcutClient struct {
-	Stories map[int]sc.Story
+	Stories     map[int]sc.Story
+	TaskUpdates map[int]map[int64]sc.UpdateTask
 }
 
 func (mockShortcutClient MockShortcutClient) GetStory(publicID int) (sc.Story, error) {
 	return mockShortcutClient.Stories[publicID], nil
+}
+
+func (mockShortcutClient *MockShortcutClient) UpdateTask(storyID int, tasks map[int64]sc.UpdateTask) error {
+	if mockShortcutClient.TaskUpdates == nil {
+		mockShortcutClient.TaskUpdates = make(map[int]map[int64]sc.UpdateTask)
+	}
+	mockShortcutClient.TaskUpdates[storyID] = tasks
+	return nil
 }

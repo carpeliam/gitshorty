@@ -23,7 +23,7 @@ func (browserSpy *BrowserSpy) OpenURL(URL string) (*exec.Cmd, error) {
 var _ = Describe("BrowseStory", func() {
 	It("should open the browser to the URL of the story", func() {
 		mockGitRepo := &support.MockGitRepository{CurrentBranchName: "gitshorty-sc-123"}
-		mockShortcutClient := support.MockShortcutClient{
+		mockShortcutClient := &support.MockShortcutClient{
 			Stories: map[int]sc.Story{
 				123: {AppUrl: "https://app.shortcut.com/gitshorty/story/123"},
 			},
@@ -38,7 +38,7 @@ var _ = Describe("BrowseStory", func() {
 
 	It("should return an error if the story is not found", func() {
 		mockGitRepo := &support.MockGitRepository{CurrentBranchName: "main"}
-		mockShortcutClient := support.MockShortcutClient{
+		mockShortcutClient := &support.MockShortcutClient{
 			Stories: map[int]sc.Story{},
 		}
 		browserSpy := &BrowserSpy{}

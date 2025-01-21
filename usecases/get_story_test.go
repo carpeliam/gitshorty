@@ -12,7 +12,7 @@ import (
 var _ = Describe("Getting stories", func() {
 	Describe("GetStoryByBranchName", func() {
 		It("gets a Shortcut Story based on the given git branch name", func() {
-			mockShortcutClient := support.MockShortcutClient{
+			mockShortcutClient := &support.MockShortcutClient{
 				Stories: map[int]sc.Story{
 					123: {Id: 123},
 				},

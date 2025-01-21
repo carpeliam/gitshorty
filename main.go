@@ -16,6 +16,7 @@ import (
 	"github.com/carpeliam/gitshorty/shortcut"
 	"github.com/carpeliam/gitshorty/tasks"
 	"github.com/carpeliam/gitshorty/version"
+	"github.com/charmbracelet/huh"
 	"github.com/urfave/cli/v2"
 )
 
@@ -94,15 +95,32 @@ func main() {
 			{
 				Name:  "tasks",
 				Usage: "display tasks associated with the current branch's story",
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:  "interactive",
+						Usage: "check tasks off as you complete them",
+						Value: true,
+					},
+				},
 				Action: func(ctx *cli.Context) error {
 					git := git.NewRepository()
 					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
-					tasks, err := tasks.ListTasks(git, shortcutClient)
+					shortcutTasks, err := tasks.ListTasks(git, shortcutClient)
 					if err == nil {
-						if len(tasks) == 0 {
-							fmt.Println("No tasks found")
+						if len(shortcutTasks) == 0 {
+							fmt.Println("No shortcutTasks found")
 						} else {
-							fmt.Println(strings.Join(taskList(tasks), "\n"))
+							if ctx.Bool("interactive") {
+								var values []int64
+								if err = taskListDynamic(shortcutTasks).Value(&values).Run(); err != nil {
+									return err
+								} else {
+									storyId := shortcutTasks[0].StoryId
+									return tasks.UpdateTasks(shortcutClient, int(storyId), tasks.GetTaskChanges(shortcutTasks, values))
+								}
+							} else {
+								fmt.Println(strings.Join(taskListStatic(shortcutTasks), "\n"))
+							}
 						}
 					}
 					return err
@@ -116,7 +134,7 @@ func main() {
 	}
 }
 
-func taskList(tasks []sc.Task) []string {
+func taskListStatic(tasks []sc.Task) []string {
 	taskStrings := make([]string, len(tasks))
 	for i, task := range tasks {
 		var taskString strings.Builder
@@ -131,4 +149,12 @@ func taskList(tasks []sc.Task) []string {
 		taskStrings[i] = taskString.String()
 	}
 	return taskStrings
+}
+
+func taskListDynamic(tasks []sc.Task) *huh.MultiSelect[int64] {
+	options := make([]huh.Option[int64], len(tasks))
+	for i, task := range tasks {
+		options[i] = huh.NewOption(task.Description, task.Id).Selected(task.Complete)
+	}
+	return huh.NewMultiSelect[int64]().Options(options...).Title("Press SPACE to toggle, ENTER to submit")
 }

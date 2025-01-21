@@ -9,6 +9,7 @@ import (
 
 type Client interface {
 	GetStory(storyID int) (sc.Story, error)
+	UpdateTask(storyID int, tasks map[int64]sc.UpdateTask) error
 }
 
 type ShortcutClient struct {
@@ -29,4 +30,15 @@ func (shortcut ShortcutClient) GetStory(publicID int) (sc.Story, error) {
 		slog.Debug("Error received from Shortcut", "http response", resp)
 	}
 	return story, err
+}
+
+func (shortcut ShortcutClient) UpdateTask(storyID int, tasks map[int64]sc.UpdateTask) error {
+	for taskId, taskUpdates := range tasks {
+		_, resp, err := shortcut.client.DefaultApi.UpdateTask(shortcut.auth, taskUpdates, int64(storyID), taskId)
+		if err != nil {
+			slog.Debug("Error received from Shortcut", "http response", resp)
+			return err
+		}
+	}
+	return nil
 }
