@@ -2,15 +2,19 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
+	"strings"
 
 	"github.com/Songmu/prompter"
 	"github.com/carpeliam/gitshorty/browse"
 	"github.com/carpeliam/gitshorty/clean"
+	sc "github.com/carpeliam/gitshorty/generated"
 	"github.com/carpeliam/gitshorty/git"
 	"github.com/carpeliam/gitshorty/shortcut"
+	"github.com/carpeliam/gitshorty/tasks"
 	"github.com/carpeliam/gitshorty/version"
 	"github.com/urfave/cli/v2"
 )
@@ -87,10 +91,44 @@ func main() {
 					return err
 				},
 			},
+			{
+				Name:  "tasks",
+				Usage: "display tasks associated with the current branch's story",
+				Action: func(ctx *cli.Context) error {
+					git := git.NewRepository()
+					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
+					tasks, err := tasks.ListTasks(git, shortcutClient)
+					if err == nil {
+						if len(tasks) == 0 {
+							fmt.Println("No tasks found")
+						} else {
+							fmt.Println(strings.Join(taskList(tasks), "\n"))
+						}
+					}
+					return err
+				},
+			},
 		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func taskList(tasks []sc.Task) []string {
+	taskStrings := make([]string, len(tasks))
+	for i, task := range tasks {
+		var taskString strings.Builder
+		taskString.WriteString("[")
+		if task.Complete {
+			taskString.WriteString("x")
+		} else {
+			taskString.WriteString(" ")
+		}
+		taskString.WriteString("] ")
+		taskString.WriteString(task.Description)
+		taskStrings[i] = taskString.String()
+	}
+	return taskStrings
 }

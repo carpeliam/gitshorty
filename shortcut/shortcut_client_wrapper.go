@@ -2,7 +2,7 @@ package shortcut
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
 
 	sc "github.com/carpeliam/gitshorty/generated"
 )
@@ -26,7 +26,7 @@ func NewShortcutClient(apiToken string) Client {
 func (shortcut ShortcutClient) GetStory(publicID int) (sc.Story, error) {
 	story, resp, err := shortcut.client.DefaultApi.GetStory(shortcut.auth, int64(publicID))
 	if err != nil {
-		fmt.Printf("Error received; Shortcut Response: %+v", resp)
+		slog.Debug("Error received from Shortcut", "http response", resp)
 	}
 	return story, err
 }
