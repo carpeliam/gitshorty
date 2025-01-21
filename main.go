@@ -156,5 +156,5 @@ func taskListDynamic(tasks []sc.Task) *huh.MultiSelect[int64] {
 	for i, task := range tasks {
 		options[i] = huh.NewOption(task.Description, task.Id).Selected(task.Complete)
 	}
-	return huh.NewMultiSelect[int64]().Options(options...).Title("Press SPACE to toggle, ENTER to submit")
+	return huh.NewMultiSelect[int64]().Options(options...).Title("Press SPACE to toggle, ENTER to submit, '/' to filter")
 }

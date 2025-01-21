@@ -14,7 +14,7 @@ type UpdateTask struct {
 	// An array of UUIDs of the owners of this story.
 	OwnerIds []string `json:"owner_ids,omitempty"`
 	// A true/false boolean indicating whether the task is complete.
-	Complete bool `json:"complete,omitempty"`
+	Complete bool `json:"complete"`
 	// Move task before this task ID.
 	BeforeId int64 `json:"before_id,omitempty"`
 	// Move task after this task ID.
