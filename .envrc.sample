@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+echo "The enclosed SHORTCUT_API_TOKEN is for display purposes only. Please use your own token following the instructions at https://help.shortcut.com/hc/en-us/articles/205701199-Shortcut-API-Tokens."
+export SHORTCUT_API_TOKEN="1351e67f-993e-4656-b001-a3842d1354e2"
