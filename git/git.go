@@ -13,6 +13,31 @@ type Repository interface {
 	DeleteRemoteBranch(branchName string) error
 }
 
+type BranchIterator interface {
+	GetBranchNames() []string
+}
+type LocalBranchIterator struct {
+	repo Repository
+}
+
+func (iterator LocalBranchIterator) GetBranchNames() []string {
+	return iterator.repo.GetLocalBranchNames()
+}
+func NewLocalBranchIterator(repo Repository) BranchIterator {
+	return LocalBranchIterator{repo: repo}
+}
+
+type RemoteBranchIterator struct {
+	repo Repository
+}
+
+func (iterator RemoteBranchIterator) GetBranchNames() []string {
+	return iterator.repo.GetRemoteBranchNames()
+}
+func NewRemoteBranchIterator(repo Repository) BranchIterator {
+	return RemoteBranchIterator{repo: repo}
+}
+
 type GitRepository struct{}
 
 func (repository GitRepository) GetCurrentBranchName() string {
