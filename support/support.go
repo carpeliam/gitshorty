@@ -1,6 +1,11 @@
 package support
 
-import sc "github.com/carpeliam/gitshorty/generated"
+import (
+	"fmt"
+
+	sc "github.com/carpeliam/gitshorty/generated"
+	"github.com/carpeliam/gitshorty/git"
+)
 
 type MockGitRepository struct {
 	CurrentBranchName     string
@@ -30,6 +35,15 @@ func (repository *MockGitRepository) DeleteLocalBranch(branchName string) error 
 func (repository *MockGitRepository) DeleteRemoteBranch(branchName string) error {
 	repository.DeletedRemoteBranches = append(repository.DeletedRemoteBranches, branchName)
 	return nil
+}
+func (repository *MockGitRepository) DeleteBranch(branch git.Branch) error {
+	switch branch.Type {
+	case git.Local:
+		return repository.DeleteLocalBranch(branch.Name)
+	case git.Remote:
+		return repository.DeleteRemoteBranch(branch.Name)
+	}
+	return fmt.Errorf("unknown branch type: %d", branch.Type)
 }
 
 type MockShortcutClient struct {

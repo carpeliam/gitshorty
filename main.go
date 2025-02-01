@@ -1,20 +1,21 @@
 package main
 
 import (
-	"errors"
+	// "errors"
 	"fmt"
 	"log"
 	"log/slog"
 	"os"
 	"strings"
 
-	"github.com/Songmu/prompter"
+	// "github.com/Songmu/prompter"
 	"github.com/carpeliam/gitshorty/browse"
-	"github.com/carpeliam/gitshorty/clean"
+	// "github.com/carpeliam/gitshorty/clean"
 	sc "github.com/carpeliam/gitshorty/generated"
 	"github.com/carpeliam/gitshorty/git"
 	"github.com/carpeliam/gitshorty/shortcut"
 	"github.com/carpeliam/gitshorty/tasks"
+	"github.com/carpeliam/gitshorty/usecases"
 	"github.com/carpeliam/gitshorty/version"
 	"github.com/charmbracelet/huh"
 	"github.com/urfave/cli/v2"
@@ -64,7 +65,7 @@ func main() {
 			},
 			{
 				Name:  "clean",
-				Usage: "delete local branches associated with delivered stories",
+				Usage: "delete branches associated with delivered stories",
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:    "confirm",
@@ -87,27 +88,59 @@ func main() {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					if !ctx.Bool("local") && !ctx.Bool("remote") {
-						return errors.New("must specify at least one of --local or --remote")
-					}
-					if !ctx.Bool("dry-run") && !ctx.Bool("confirm") {
-						shouldContinue := prompter.YesNo("This is a destructive operation. Are you sure you want to continue? You can supply --dry-run to see what would be deleted without actually deleting anything, or --confirm to skip this prompt in the future.", false)
-						if !shouldContinue {
-							return nil
-						}
-					}
-					git := git.NewRepository()
+					repo := git.NewRepository()
 					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
-					deletedBranches, err := clean.CleanBranches(git, shortcutClient, clean.CleanOpts{
-						DryRun:                ctx.Bool("dry-run"),
-						IncludeLocalBranches:  ctx.Bool("local"),
-						IncludeRemoteBranches: ctx.Bool("remote"),
+					potentialBranches, err := usecases.GetBranchesForDeliveredStories(repo, shortcutClient, usecases.GetBranchesForDeliveredStoriesOptions{
+						IncludeLocal:  ctx.Bool("local"),
+						IncludeRemote: ctx.Bool("remote"),
 					})
-					if deletedBranches != nil {
-						fmt.Printf("Deleted branches: %s\n", strings.Join(deletedBranches, ", "))
-						return nil
+					if potentialBranches == nil && err != nil {
+						return err
 					}
-					return err
+					var branches []git.Branch
+					if err = branchList(potentialBranches).Value(&branches).Run(); err != nil {
+						return err
+					} else {
+						branchNames := make([]string, len(branches))
+						for i, branch := range branches {
+							branchNames[i] = branch.Name
+						}
+						if ctx.Bool("dry-run") {
+							fmt.Printf("Would delete branches: %s\n", strings.Join(branchNames, ", "))
+						}
+						deletedBranchNames := []string{}
+						for _, branch := range branches {
+							err = repo.DeleteBranch(branch)
+							if err != nil {
+								fmt.Printf("Deleted the following branches before exiting: %s\n", strings.Join(deletedBranchNames, ", "))
+								return err
+							}
+							deletedBranchNames = append(deletedBranchNames, branch.Name)
+						}
+						fmt.Printf("Deleted the following branches: %s\n", strings.Join(deletedBranchNames, ", "))
+					}
+					return nil
+					// if !ctx.Bool("local") && !ctx.Bool("remote") {
+					// 	return errors.New("must specify at least one of --local or --remote")
+					// }
+					// if !ctx.Bool("dry-run") && !ctx.Bool("confirm") {
+					// 	shouldContinue := prompter.YesNo("This is a destructive operation. Are you sure you want to continue? You can supply --dry-run to see what would be deleted without actually deleting anything, or --confirm to skip this prompt in the future.", false)
+					// 	if !shouldContinue {
+					// 		return nil
+					// 	}
+					// }
+					// git := git.NewRepository()
+					// shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
+					// deletedBranches, err := clean.CleanBranches(git, shortcutClient, clean.CleanOpts{
+					// 	DryRun:                ctx.Bool("dry-run"),
+					// 	IncludeLocalBranches:  ctx.Bool("local"),
+					// 	IncludeRemoteBranches: ctx.Bool("remote"),
+					// })
+					// if deletedBranches != nil {
+					// 	fmt.Printf("Deleted branches: %s\n", strings.Join(deletedBranches, ", "))
+					// 	return nil
+					// }
+					// return err
 				},
 			},
 			{
@@ -175,4 +208,12 @@ func taskListDynamic(tasks []sc.Task) *huh.MultiSelect[int64] {
 		options[i] = huh.NewOption(task.Description, task.Id).Selected(task.Complete)
 	}
 	return huh.NewMultiSelect[int64]().Options(options...).Title("Press SPACE to toggle, ENTER to submit, '/' to filter")
+}
+
+func branchList(branches []git.Branch) *huh.MultiSelect[git.Branch] {
+	options := make([]huh.Option[git.Branch], len(branches))
+	for i, branch := range branches {
+		options[i] = huh.NewOption(branch.Name, branch).Selected(false)
+	}
+	return huh.NewMultiSelect[git.Branch]().Options(options...).Title("Press SPACE to toggle, ENTER to submit, '/' to filter")
 }

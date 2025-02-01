@@ -2,6 +2,7 @@ package usecases_test
 
 import (
 	sc "github.com/carpeliam/gitshorty/generated"
+	"github.com/carpeliam/gitshorty/git"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -32,7 +33,7 @@ var _ = Describe("GetBranchesForDeliveredStories", func() {
 		branches, err := usecases.GetBranchesForDeliveredStories(mockGitRepo, mockShortcutClient, localBranchesOnly)
 
 		Expect(err).To(BeNil())
-		Expect(branches).To(Equal([]string{"gitshorty-sc-123"}))
+		Expect(branches).To(Equal([]git.Branch{{Name: "gitshorty-sc-123", Type: git.Local}}))
 	})
 	It("returns remote branch names for all delivered stories", func() {
 		mockShortcutClient := &support.MockShortcutClient{
@@ -49,7 +50,8 @@ var _ = Describe("GetBranchesForDeliveredStories", func() {
 		branches, err := usecases.GetBranchesForDeliveredStories(mockGitRepo, mockShortcutClient, remoteBranchesOnly)
 
 		Expect(err).To(BeNil())
-		Expect(branches).To(Equal([]string{"origin/gitshorty-sc-123"}))
+		Expect(branches).To(Equal([]git.Branch{{Name: "origin/gitshorty-sc-123", Type: git.Remote}}))
+
 	})
 	It("returns mixed branch names for all delivered stories", func() {
 		mockShortcutClient := &support.MockShortcutClient{
@@ -66,6 +68,9 @@ var _ = Describe("GetBranchesForDeliveredStories", func() {
 		branches, err := usecases.GetBranchesForDeliveredStories(mockGitRepo, mockShortcutClient, localAndRemoteBranches)
 
 		Expect(err).To(BeNil())
-		Expect(branches).To(Equal([]string{"gitshorty-sc-123", "origin/gitshorty-sc-123"}))
+		Expect(branches).To(Equal([]git.Branch{
+			{Name: "gitshorty-sc-123", Type: git.Local},
+			{Name: "origin/gitshorty-sc-123", Type: git.Remote},
+		}))
 	})
 })

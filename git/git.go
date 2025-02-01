@@ -11,17 +11,35 @@ type Repository interface {
 	GetRemoteBranchNames() []string
 	DeleteLocalBranch(branchName string) error
 	DeleteRemoteBranch(branchName string) error
+	DeleteBranch(branch Branch) error
+}
+
+type BranchType int
+
+const (
+	Local BranchType = iota
+	Remote
+)
+
+type Branch struct {
+	Name string
+	Type BranchType
 }
 
 type BranchIterator interface {
-	GetBranchNames() []string
+	GetBranches() []Branch
 }
 type LocalBranchIterator struct {
 	repo Repository
 }
 
-func (iterator LocalBranchIterator) GetBranchNames() []string {
-	return iterator.repo.GetLocalBranchNames()
+func (iterator LocalBranchIterator) GetBranches() []Branch {
+	branchNames := iterator.repo.GetLocalBranchNames()
+	branches := make([]Branch, len(branchNames))
+	for i, branchName := range branchNames {
+		branches[i] = Branch{Name: branchName, Type: Local}
+	}
+	return branches
 }
 func NewLocalBranchIterator(repo Repository) BranchIterator {
 	return LocalBranchIterator{repo: repo}
@@ -31,8 +49,13 @@ type RemoteBranchIterator struct {
 	repo Repository
 }
 
-func (iterator RemoteBranchIterator) GetBranchNames() []string {
-	return iterator.repo.GetRemoteBranchNames()
+func (iterator RemoteBranchIterator) GetBranches() []Branch {
+	branchNames := iterator.repo.GetRemoteBranchNames()
+	branches := make([]Branch, len(branchNames))
+	for i, branchName := range branchNames {
+		branches[i] = Branch{Name: branchName, Type: Remote}
+	}
+	return branches
 }
 func NewRemoteBranchIterator(repo Repository) BranchIterator {
 	return RemoteBranchIterator{repo: repo}
@@ -67,6 +90,16 @@ func (repository GitRepository) DeleteRemoteBranch(remoteBranchName string) erro
 	branch := remoteAndBranch[1]
 	_, err := exec.Command("git", "push", "--delete", remote, branch).Output()
 	return err
+}
+
+func (repository GitRepository) DeleteBranch(branch Branch) error {
+	switch branch.Type {
+	case Local:
+		return repository.DeleteLocalBranch(branch.Name)
+	case Remote:
+		return repository.DeleteRemoteBranch(branch.Name)
+	}
+	return nil
 }
 
 func NewRepository() Repository {

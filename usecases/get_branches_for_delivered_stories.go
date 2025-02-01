@@ -12,8 +12,8 @@ type GetBranchesForDeliveredStoriesOptions struct {
 	IncludeRemote bool
 }
 
-func GetBranchesForDeliveredStories(repo git.Repository, shortcutClient shortcut.Client, options GetBranchesForDeliveredStoriesOptions) ([]string, error) {
-	branches := []string{}
+func GetBranchesForDeliveredStories(repo git.Repository, shortcutClient shortcut.Client, options GetBranchesForDeliveredStoriesOptions) ([]git.Branch, error) {
+	branches := []git.Branch{}
 	if options.IncludeLocal {
 		slog.Debug("Getting local branches")
 		iterator := git.NewLocalBranchIterator(repo)
@@ -37,23 +37,23 @@ func GetBranchesForDeliveredStories(repo git.Repository, shortcutClient shortcut
 	}
 	return branches, nil
 }
-func getBranchesForDeliveredStories(iterator git.BranchIterator, shortcutClient shortcut.Client) ([]string, error) {
-	branchNames := iterator.GetBranchNames()
+func getBranchesForDeliveredStories(iterator git.BranchIterator, shortcutClient shortcut.Client) ([]git.Branch, error) {
+	branches := iterator.GetBranches()
 
-	branches := []string{}
-	for _, branchName := range branchNames {
-		slog.Debug("Considering branch", "branch", branchName)
-		story, err := GetStoryByBranchName(branchName, shortcutClient)
+	deliveredBranches := []git.Branch{}
+	for _, branch := range branches {
+		slog.Debug("Considering branch", "branch", branch.Name)
+		story, err := GetStoryByBranchName(branch.Name, shortcutClient)
 		if err != nil {
-			slog.Warn("Error while fetching story", "error", err, "branch", branchName)
+			slog.Warn("Error while fetching story", "error", err, "branch", branch.Name)
 			return nil, err
 		}
 		if story == nil {
 			continue
 		}
 		if story.Completed {
-			branches = append(branches, branchName)
+			deliveredBranches = append(deliveredBranches, branch)
 		}
 	}
-	return branches, nil
+	return deliveredBranches, nil
 }
