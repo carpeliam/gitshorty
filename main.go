@@ -21,17 +21,34 @@ import (
 )
 
 func main() {
+	slog.SetLogLoggerLevel(slog.LevelError)
+
 	app := &cli.App{
-		Name:                 "sc",
-		Usage:                "command-line client for Shortcut",
-		Version:              version.Version,
-		EnableBashCompletion: true,
+		Name:                   "sc",
+		Usage:                  "command-line client for Shortcut",
+		Version:                version.Version,
+		EnableBashCompletion:   true,
+		UseShortOptionHandling: true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "api-token",
 				Usage:    "API Token to use with Shortcut API",
 				EnvVars:  []string{"SHORTCUT_API_TOKEN"},
 				Required: true,
+			},
+			&cli.BoolFlag{
+				Name:    "verbose",
+				Usage:   "enable verbose logging",
+				Aliases: []string{"V"},
+				Action: func(ctx *cli.Context, verbose bool) error {
+					switch ctx.Count("verbose") {
+					case 1:
+						slog.SetLogLoggerLevel(slog.LevelInfo)
+					default:
+						slog.SetLogLoggerLevel(slog.LevelDebug)
+					}
+					return nil
+				},
 			},
 		},
 		Commands: []*cli.Command{
@@ -86,8 +103,9 @@ func main() {
 						IncludeLocalBranches:  ctx.Bool("local"),
 						IncludeRemoteBranches: ctx.Bool("remote"),
 					})
-					if err == nil {
-						slog.Info("Deleted branches", "branches", deletedBranches)
+					if deletedBranches != nil {
+						fmt.Printf("Deleted branches: %s\n", strings.Join(deletedBranches, ", "))
+						return nil
 					}
 					return err
 				},

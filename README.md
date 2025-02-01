@@ -20,6 +20,7 @@ COMMANDS:
 
 GLOBAL OPTIONS:
    --api-token value  API Token to use with Shortcut API [$SHORTCUT_API_TOKEN]
+   --verbose, -V      enable verbose logging (default: false)
    --help, -h         show help
    --version, -v      print the version
 ```
