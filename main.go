@@ -15,6 +15,7 @@ import (
 	"github.com/carpeliam/gitshorty/git"
 	"github.com/carpeliam/gitshorty/shortcut"
 	"github.com/carpeliam/gitshorty/tasks"
+	"github.com/carpeliam/gitshorty/usecases"
 	"github.com/carpeliam/gitshorty/version"
 	"github.com/charmbracelet/huh"
 	"github.com/urfave/cli/v2"
@@ -138,6 +139,24 @@ func main() {
 								}
 							} else {
 								fmt.Println(strings.Join(taskListStatic(shortcutTasks), "\n"))
+							}
+						}
+					}
+					return err
+				},
+			},
+			{
+				Name:  "mywork",
+				Usage: "display branches associated with the current user's stories",
+				Action: func(ctx *cli.Context) error {
+					git := git.NewRepository()
+					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
+					stories, err := usecases.GetMyStories(git, shortcutClient)
+					if err == nil {
+						for _, story := range stories {
+							fmt.Printf("[sc-%d]\t%s\n", story.Id, story.Name)
+							for _, branch := range story.Branches {
+								fmt.Printf(" * %s\n", branch.Name)
 							}
 						}
 					}
