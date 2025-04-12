@@ -4,8 +4,8 @@ import (
 	"log/slog"
 
 	"github.com/carpeliam/gitshorty/git"
+	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/shortcut"
-	"github.com/carpeliam/gitshorty/usecases"
 )
 
 type CleanOpts struct {
@@ -47,7 +47,7 @@ func cleanBranches(g gitRepo, shortcutClient shortcut.Client, isDryRun bool) ([]
 			slog.Info("Skipping branch, as it's the current branch", "branch", branchName)
 			continue
 		}
-		story, err := usecases.GetStoryByBranchName(branchName, shortcutClient)
+		story, err := gitshorty.GetStoryByBranchName(branchName, shortcutClient)
 		if err != nil {
 			slog.Warn("Error while fetching story", "error", err, "branch", branchName)
 			lastError = err

@@ -6,13 +6,13 @@ import (
 
 	sc "github.com/carpeliam/gitshorty/generated"
 	"github.com/carpeliam/gitshorty/git"
+	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/shortcut"
-	"github.com/carpeliam/gitshorty/usecases"
 )
 
 func ListTasks(repo git.Repository, shortcutClient shortcut.Client) ([]sc.Task, error) {
 	currentBranch := repo.GetCurrentBranchName()
-	story, err := usecases.GetStoryByBranchName(currentBranch, shortcutClient)
+	story, err := gitshorty.GetStoryByBranchName(currentBranch, shortcutClient)
 	if story == nil {
 		return nil, fmt.Errorf("tasks not found for branch '%s'", currentBranch)
 	}

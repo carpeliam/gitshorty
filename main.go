@@ -13,9 +13,9 @@ import (
 	"github.com/carpeliam/gitshorty/clean"
 	sc "github.com/carpeliam/gitshorty/generated"
 	"github.com/carpeliam/gitshorty/git"
+	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/shortcut"
 	"github.com/carpeliam/gitshorty/tasks"
-	"github.com/carpeliam/gitshorty/usecases"
 	"github.com/carpeliam/gitshorty/version"
 	"github.com/charmbracelet/huh"
 	"github.com/urfave/cli/v2"
@@ -151,7 +151,7 @@ func main() {
 				Action: func(ctx *cli.Context) error {
 					git := git.NewRepository()
 					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
-					stories, err := usecases.GetMyStories(git, shortcutClient)
+					stories, err := gitshorty.GetMyStories(git, shortcutClient)
 					if err == nil {
 						for _, story := range stories {
 							fmt.Printf("[sc-%d]\t%s\n", story.Id, story.Name)

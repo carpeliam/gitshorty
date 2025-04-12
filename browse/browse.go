@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/carpeliam/gitshorty/git"
+	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/shortcut"
-	"github.com/carpeliam/gitshorty/usecases"
 )
 
 func getStoryId(branchName string) (int, error) {
@@ -21,7 +21,7 @@ func getStoryId(branchName string) (int, error) {
 
 func BrowseStory(repository git.Repository, shortcutClient shortcut.Client, browser Browser) error {
 	currentBranch := repository.GetCurrentBranchName()
-	story, err := usecases.GetStoryByBranchName(currentBranch, shortcutClient)
+	story, err := gitshorty.GetStoryByBranchName(currentBranch, shortcutClient)
 	if err != nil {
 		return err
 	}

@@ -1,12 +1,12 @@
-package usecases_test
+package gitshorty_test
 
 import (
 	sc "github.com/carpeliam/gitshorty/generated"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	. "github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/support"
-	. "github.com/carpeliam/gitshorty/usecases"
 )
 
 var _ = Describe("Getting stories", func() {

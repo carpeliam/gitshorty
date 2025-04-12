@@ -1,4 +1,4 @@
-package usecases_test
+package gitshorty_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestUsecases(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Usecases Suite")
+	RunSpecs(t, "GitShorty Suite")
 }
