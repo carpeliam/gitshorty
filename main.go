@@ -57,10 +57,11 @@ func main() {
 				Name:  "browse",
 				Usage: "open story associated with current branch in web browser",
 				Action: func(ctx *cli.Context) error {
-					git := git.NewRepository()
+					repo := git.NewRepository()
 					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
 					browser := browse.NewBrowser()
-					return browse.BrowseStory(git, shortcutClient, browser)
+					gs := gitshorty.NewGitShorty(repo, shortcutClient)
+					return browse.BrowseStory(gs, browser)
 				},
 			},
 			{
@@ -122,9 +123,10 @@ func main() {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					git := git.NewRepository()
+					repo := git.NewRepository()
 					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
-					shortcutTasks, err := tasks.ListTasks(git, shortcutClient)
+					gs := gitshorty.NewGitShorty(repo, shortcutClient)
+					shortcutTasks, err := tasks.ListTasks(gs)
 					if err == nil {
 						if len(shortcutTasks) == 0 {
 							fmt.Println("No shortcutTasks found")
@@ -149,9 +151,10 @@ func main() {
 				Name:  "mywork",
 				Usage: "display branches associated with the current user's stories",
 				Action: func(ctx *cli.Context) error {
-					git := git.NewRepository()
+					repo := git.NewRepository()
 					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
-					stories, err := gitshorty.GetMyStories(git, shortcutClient)
+					gs := gitshorty.NewGitShorty(repo, shortcutClient)
+					stories, err := gs.GetMyStories()
 					if err == nil {
 						for _, story := range stories {
 							fmt.Printf("[sc-%d]\t%s\n", story.Id, story.Name)

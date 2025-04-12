@@ -1,6 +1,7 @@
 package tasks_test
 
 import (
+	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/support"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -24,7 +25,7 @@ var _ = Describe("Tasks", func() {
 				},
 			},
 		}
-		returnedTasks, err := tasks.ListTasks(mockGitRepo, mockShortcutClient)
+		returnedTasks, err := tasks.ListTasks(gitshorty.NewGitShorty(mockGitRepo, mockShortcutClient))
 
 		Expect(err).To(BeNil())
 		Expect(returnedTasks).To(Equal(expectedTasks))
@@ -34,7 +35,7 @@ var _ = Describe("Tasks", func() {
 		mockGitRepo := &support.MockGitRepository{CurrentBranchName: "main"}
 		mockShortcutClient := &support.MockShortcutClient{}
 
-		returnedTasks, err := tasks.ListTasks(mockGitRepo, mockShortcutClient)
+		returnedTasks, err := tasks.ListTasks(gitshorty.NewGitShorty(mockGitRepo, mockShortcutClient))
 
 		Expect(err).NotTo(BeNil())
 		Expect(returnedTasks).To(BeNil())

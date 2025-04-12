@@ -20,7 +20,22 @@ type Story struct {
 	Branches []Branch
 }
 
-func GetStoryByBranchName(branchName string, shortcutClient shortcut.Client) (*sc.Story, error) {
+type GitShorty struct {
+	repository     git.Repository
+	shortcutClient shortcut.Client
+}
+
+func NewGitShorty(repository git.Repository,
+	shortcutClient shortcut.Client) GitShorty {
+	return GitShorty{repository: repository, shortcutClient: shortcutClient}
+}
+
+func (gs GitShorty) GetStoryForCurrentBranch() (*sc.Story, error) {
+	branchName := gs.repository.GetCurrentBranchName()
+	return gs.GetStoryByBranchName(branchName)
+}
+
+func (gs GitShorty) GetStoryByBranchName(branchName string) (*sc.Story, error) {
 	storyId, error := getStoryId(branchName)
 	if error != nil {
 		return nil, error
@@ -28,18 +43,18 @@ func GetStoryByBranchName(branchName string, shortcutClient shortcut.Client) (*s
 	if storyId == nil {
 		return nil, nil
 	}
-	story, err := shortcutClient.GetStory(*storyId)
+	story, err := gs.shortcutClient.GetStory(*storyId)
 	return &story, err
 }
 
-func GetMyStories(repository git.Repository, shortcutClient shortcut.Client) ([]Story, error) {
-	localBranches := repository.GetLocalBranchNames()
-	remoteBranches := repository.GetRemoteBranchNames()
-	memberInfo, err := shortcutClient.GetMemberInfo()
+func (gs GitShorty) GetMyStories() ([]Story, error) {
+	localBranches := gs.repository.GetLocalBranchNames()
+	remoteBranches := gs.repository.GetRemoteBranchNames()
+	memberInfo, err := gs.shortcutClient.GetMemberInfo()
 	if err != nil {
 		return nil, err
 	}
-	searchResults, err := shortcutClient.SearchStories(memberInfo.MentionName)
+	searchResults, err := gs.shortcutClient.SearchStories(memberInfo.MentionName)
 	if err != nil {
 		return nil, err
 	}

@@ -15,10 +15,11 @@ type CleanOpts struct {
 }
 
 func CleanBranches(repo git.Repository, shortcutClient shortcut.Client, opts CleanOpts) ([]string, error) {
+	gs := gitshorty.NewGitShorty(repo, shortcutClient)
 	isDryRun := opts.DryRun
 	deletedBranches := []string{}
 	if opts.IncludeLocalBranches {
-		localDeletedBranches, err := cleanBranches(newLocalGitRepo(repo), shortcutClient, isDryRun)
+		localDeletedBranches, err := cleanBranches(newLocalGitRepo(repo), gs, isDryRun)
 		if err != nil {
 			slog.Warn("Error while cleaning local branches, not attempting to clean remote branches", "error", err)
 			return localDeletedBranches, err
@@ -26,7 +27,7 @@ func CleanBranches(repo git.Repository, shortcutClient shortcut.Client, opts Cle
 		deletedBranches = localDeletedBranches
 	}
 	if opts.IncludeRemoteBranches {
-		remoteDeletedBranches, err := cleanBranches(newRemoteGitRepo(repo), shortcutClient, isDryRun)
+		remoteDeletedBranches, err := cleanBranches(newRemoteGitRepo(repo), gs, isDryRun)
 		if err != nil {
 			return remoteDeletedBranches, err
 		}
@@ -35,7 +36,7 @@ func CleanBranches(repo git.Repository, shortcutClient shortcut.Client, opts Cle
 	return deletedBranches, nil
 }
 
-func cleanBranches(g gitRepo, shortcutClient shortcut.Client, isDryRun bool) ([]string, error) {
+func cleanBranches(g gitRepo, gs gitshorty.GitShorty, isDryRun bool) ([]string, error) {
 	branchNames := g.getBranchNames()
 	deletedBranches := []string{}
 	var lastError error
@@ -47,7 +48,7 @@ func cleanBranches(g gitRepo, shortcutClient shortcut.Client, isDryRun bool) ([]
 			slog.Info("Skipping branch, as it's the current branch", "branch", branchName)
 			continue
 		}
-		story, err := gitshorty.GetStoryByBranchName(branchName, shortcutClient)
+		story, err := gs.GetStoryByBranchName(branchName)
 		if err != nil {
 			slog.Warn("Error while fetching story", "error", err, "branch", branchName)
 			lastError = err

@@ -3,6 +3,7 @@ package browse_test
 import (
 	"os/exec"
 
+	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/support"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -30,7 +31,7 @@ var _ = Describe("BrowseStory", func() {
 		}
 		browserSpy := &BrowserSpy{}
 
-		error := browse.BrowseStory(mockGitRepo, mockShortcutClient, browserSpy)
+		error := browse.BrowseStory(gitshorty.NewGitShorty(mockGitRepo, mockShortcutClient), browserSpy)
 
 		Expect(error).To(BeNil())
 		Expect(browserSpy.openedURL).To(Equal("https://app.shortcut.com/gitshorty/story/123"))
@@ -43,7 +44,7 @@ var _ = Describe("BrowseStory", func() {
 		}
 		browserSpy := &BrowserSpy{}
 
-		err := browse.BrowseStory(mockGitRepo, mockShortcutClient, browserSpy)
+		err := browse.BrowseStory(gitshorty.NewGitShorty(mockGitRepo, mockShortcutClient), browserSpy)
 
 		Expect(err).NotTo(BeNil())
 	})
