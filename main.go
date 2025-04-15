@@ -11,7 +11,6 @@ import (
 	"github.com/Songmu/prompter"
 	"github.com/carpeliam/gitshorty/browse"
 	"github.com/carpeliam/gitshorty/clean"
-	sc "github.com/carpeliam/gitshorty/generated"
 	"github.com/carpeliam/gitshorty/git"
 	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/shortcut"
@@ -174,7 +173,7 @@ func main() {
 	}
 }
 
-func taskListStatic(tasks []sc.Task) []string {
+func taskListStatic(tasks []gitshorty.Task) []string {
 	taskStrings := make([]string, len(tasks))
 	for i, task := range tasks {
 		var taskString strings.Builder
@@ -191,7 +190,7 @@ func taskListStatic(tasks []sc.Task) []string {
 	return taskStrings
 }
 
-func taskListDynamic(tasks []sc.Task) *huh.MultiSelect[int64] {
+func taskListDynamic(tasks []gitshorty.Task) *huh.MultiSelect[int64] {
 	options := make([]huh.Option[int64], len(tasks))
 	for i, task := range tasks {
 		options[i] = huh.NewOption(task.Description, task.Id).Selected(task.Complete)

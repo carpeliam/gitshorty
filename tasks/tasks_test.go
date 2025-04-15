@@ -12,23 +12,26 @@ import (
 
 var _ = Describe("Tasks", func() {
 	It("returns a list of tasks", func() {
-		expectedTasks := []sc.Task{
-			{Id: 1, Description: "Task 1"},
-			{Id: 2, Description: "Task 2"},
-			{Id: 3, Description: "Task 3"},
-		}
 		mockGitRepo := &support.MockGitRepository{CurrentBranchName: "magic-sc-123"}
 		mockShortcutClient := &support.MockShortcutClient{
 			Stories: map[int]sc.Story{
 				123: {
-					Tasks: expectedTasks,
+					Tasks: []sc.Task{
+						{Id: 1, Description: "Task 1"},
+						{Id: 2, Description: "Task 2"},
+						{Id: 3, Description: "Task 3"},
+					},
 				},
 			},
 		}
 		returnedTasks, err := tasks.ListTasks(gitshorty.NewGitShorty(mockGitRepo, mockShortcutClient))
 
 		Expect(err).To(BeNil())
-		Expect(returnedTasks).To(Equal(expectedTasks))
+		Expect(returnedTasks).To(Equal([]gitshorty.Task{
+			{Id: 1, Description: "Task 1"},
+			{Id: 2, Description: "Task 2"},
+			{Id: 3, Description: "Task 3"},
+		}))
 	})
 
 	It("should return an error if the story is not found", func() {
@@ -42,7 +45,7 @@ var _ = Describe("Tasks", func() {
 	})
 
 	It("detects changes in task completion", func() {
-		storyTasks := []sc.Task{
+		storyTasks := []gitshorty.Task{
 			{Id: 1, StoryId: 123, Description: "Task 1", Complete: false},
 			{Id: 2, StoryId: 123, Description: "Task 2", Complete: false},
 			{Id: 3, StoryId: 123, Description: "Task 3", Complete: true},

@@ -15,9 +15,19 @@ type Branch struct {
 }
 
 type Story struct {
-	Id       int64
-	Name     string
-	Branches []Branch
+	Id        int64
+	Completed bool
+	AppUrl    string
+	Name      string
+	Tasks     []Task
+	Branches  []Branch
+}
+
+type Task struct {
+	Id          int64
+	Complete    bool
+	Description string
+	StoryId     int64
 }
 
 type GitShorty struct {
@@ -25,17 +35,16 @@ type GitShorty struct {
 	shortcutClient shortcut.Client
 }
 
-func NewGitShorty(repository git.Repository,
-	shortcutClient shortcut.Client) GitShorty {
+func NewGitShorty(repository git.Repository, shortcutClient shortcut.Client) GitShorty {
 	return GitShorty{repository: repository, shortcutClient: shortcutClient}
 }
 
-func (gs GitShorty) GetStoryForCurrentBranch() (*sc.Story, error) {
+func (gs GitShorty) GetStoryForCurrentBranch() (*Story, error) {
 	branchName := gs.repository.GetCurrentBranchName()
 	return gs.GetStoryByBranchName(branchName)
 }
 
-func (gs GitShorty) GetStoryByBranchName(branchName string) (*sc.Story, error) {
+func (gs GitShorty) GetStoryByBranchName(branchName string) (*Story, error) {
 	storyId, error := getStoryId(branchName)
 	if error != nil {
 		return nil, error
@@ -44,7 +53,8 @@ func (gs GitShorty) GetStoryByBranchName(branchName string) (*sc.Story, error) {
 		return nil, nil
 	}
 	story, err := gs.shortcutClient.GetStory(*storyId)
-	return &story, err
+	wrappedStory := wrapStory(story)
+	return &wrappedStory, err
 }
 
 func (gs GitShorty) GetMyStories() ([]Story, error) {
@@ -91,4 +101,26 @@ func getStoryId(branchName string) (*int, error) {
 	}
 	id, err := strconv.Atoi(match[1])
 	return &id, err
+}
+
+func wrapStory(story sc.Story) Story {
+	return Story{
+		Id:        story.Id,
+		AppUrl:    story.AppUrl,
+		Completed: story.Completed,
+		Tasks:     wrapTasks(story.Tasks),
+	}
+}
+
+func wrapTasks(scTasks []sc.Task) []Task {
+	tasks := make([]Task, len(scTasks))
+	for i, scTask := range scTasks {
+		tasks[i] = Task{
+			Id:          scTask.Id,
+			Complete:    scTask.Complete,
+			Description: scTask.Description,
+			StoryId:     scTask.StoryId,
+		}
+	}
+	return tasks
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/carpeliam/gitshorty/shortcut"
 )
 
-func ListTasks(gs gitshorty.GitShorty) ([]sc.Task, error) {
+func ListTasks(gs gitshorty.GitShorty) ([]gitshorty.Task, error) {
 	story, err := gs.GetStoryForCurrentBranch()
 	if story == nil {
 		return nil, fmt.Errorf("tasks not found for current branch")
@@ -17,7 +17,7 @@ func ListTasks(gs gitshorty.GitShorty) ([]sc.Task, error) {
 	return story.Tasks, err
 }
 
-func GetTaskChanges(tasks []sc.Task, ids []int64) map[int64]sc.UpdateTask {
+func GetTaskChanges(tasks []gitshorty.Task, ids []int64) map[int64]sc.UpdateTask {
 	updates := make(map[int64]sc.UpdateTask)
 	for _, task := range tasks {
 		shouldBeCompleted := slices.ContainsFunc(ids, func(id int64) bool {
