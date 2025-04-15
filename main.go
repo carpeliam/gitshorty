@@ -58,8 +58,8 @@ func main() {
 				Action: func(ctx *cli.Context) error {
 					repo := git.NewRepository()
 					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
-					browser := browse.NewBrowser()
 					gs := gitshorty.NewGitShorty(repo, shortcutClient)
+					browser := browse.NewBrowser()
 					return browse.BrowseStory(gs, browser)
 				},
 			},
@@ -125,10 +125,15 @@ func main() {
 					repo := git.NewRepository()
 					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
 					gs := gitshorty.NewGitShorty(repo, shortcutClient)
-					shortcutTasks, err := tasks.ListTasks(gs)
+
+					story, err := gs.GetStoryForCurrentBranch()
 					if err == nil {
+						if story == nil {
+							return fmt.Errorf("no story found for current branch")
+						}
+						shortcutTasks := story.Tasks
 						if len(shortcutTasks) == 0 {
-							fmt.Println("No shortcutTasks found")
+							fmt.Println("No tasks found for the associated story")
 						} else {
 							if ctx.Bool("interactive") {
 								var values []int64

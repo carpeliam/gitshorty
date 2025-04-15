@@ -1,21 +1,12 @@
 package tasks
 
 import (
-	"fmt"
 	"slices"
 
 	sc "github.com/carpeliam/gitshorty/generated"
 	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/shortcut"
 )
-
-func ListTasks(gs gitshorty.GitShorty) ([]gitshorty.Task, error) {
-	story, err := gs.GetStoryForCurrentBranch()
-	if story == nil {
-		return nil, fmt.Errorf("tasks not found for current branch")
-	}
-	return story.Tasks, err
-}
 
 func GetTaskChanges(tasks []gitshorty.Task, ids []int64) map[int64]sc.UpdateTask {
 	updates := make(map[int64]sc.UpdateTask)
