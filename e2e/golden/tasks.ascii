@@ -1,0 +1,679 @@
+>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+>
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+>
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+┃ Press SPACE to toggle, ENTER to submit, '/' to filter
+┃ > • Do the laundry
+┃   • Cook dinner
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+┃ /laundry
+┃ > • Do the laundry
+┃
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+┃ Press SPACE to toggle, ENTER to submit, '/' to filter/laundry
+┃ > • Do the laundry
+┃
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+┃ Press SPACE to toggle, ENTER to submit, '/' to filter/laundry
+┃ > • Do the laundry
+┃
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+┃ Press SPACE to toggle, ENTER to submit, '/' to filter/laundry
+┃ > ✓ Do the laundry
+┃
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+┃ Press SPACE to toggle, ENTER to submit, '/' to filter/laundry
+┃ > ✓ Do the laundry
+┃
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+>
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+> ./sc tasks
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+> ./sc tasks
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+> ./sc tasks
+┃ Press SPACE to toggle, ENTER to submit, '/' to filter
+┃ > ✓ Do the laundry
+┃   • Cook dinner
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+> ./sc tasks
+┃ Press SPACE to toggle, ENTER to submit, '/' to filter
+┃ > • Do the laundry
+┃   • Cook dinner
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+> ./sc tasks
+┃ Press SPACE to toggle, ENTER to submit, '/' to filter
+┃ > • Do the laundry
+┃   • Cook dinner
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+> ./sc tasks
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc tasks --help
+NAME:
+   sc tasks - display tasks associated with the current branch's story
+
+USAGE:
+   sc tasks [command options]
+
+OPTIONS:
+   --interactive  check tasks off as you complete them (default: true)
+   --help, -h     show help
+> ./sc tasks
+> ./sc tasks
+>
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────

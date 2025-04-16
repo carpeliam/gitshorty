@@ -1,0 +1,224 @@
+>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc clean --help
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc clean --help
+NAME:
+   sc clean - delete local branches associated with delivered stories
+
+USAGE:
+   sc clean [command options]
+
+OPTIONS:
+   --confirm, -c, -y  auto-confirm deletion, without prompting (default: false
+)
+   --dry-run          print out branches that would be deleted (default: false
+)
+   --local            delete local branches (default: true)
+   --remote           delete remote branches (default: false)
+   --help, -h         show help
+>
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc clean --help
+NAME:
+   sc clean - delete local branches associated with delivered stories
+
+USAGE:
+   sc clean [command options]
+
+OPTIONS:
+   --confirm, -c, -y  auto-confirm deletion, without prompting (default: false
+)
+   --dry-run          print out branches that would be deleted (default: false
+)
+   --local            delete local branches (default: true)
+   --remote           delete remote branches (default: false)
+   --help, -h         show help
+>
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc clean --help
+NAME:
+   sc clean - delete local branches associated with delivered stories
+
+USAGE:
+   sc clean [command options]
+
+OPTIONS:
+   --confirm, -c, -y  auto-confirm deletion, without prompting (default: false
+)
+   --dry-run          print out branches that would be deleted (default: false
+)
+   --local            delete local branches (default: true)
+   --remote           delete remote branches (default: false)
+   --help, -h         show help
+> ./sc clean --local
+
+
+────────────────────────────────────────────────────────────────────────────────
+> ./sc clean --help
+NAME:
+   sc clean - delete local branches associated with delivered stories
+
+USAGE:
+   sc clean [command options]
+
+OPTIONS:
+   --confirm, -c, -y  auto-confirm deletion, without prompting (default: false
+)
+   --dry-run          print out branches that would be deleted (default: false
+)
+   --local            delete local branches (default: true)
+   --remote           delete remote branches (default: false)
+   --help, -h         show help
+> ./sc clean --local
+This is a destructive operation. Are you sure you want to continue? You can su
+pply --dry-run to see what would be deleted without actually deleting anything
+────────────────────────────────────────────────────────────────────────────────
+> ./sc clean --help
+NAME:
+   sc clean - delete local branches associated with delivered stories
+
+USAGE:
+   sc clean [command options]
+
+OPTIONS:
+   --confirm, -c, -y  auto-confirm deletion, without prompting (default: false
+)
+   --dry-run          print out branches that would be deleted (default: false
+)
+   --local            delete local branches (default: true)
+   --remote           delete remote branches (default: false)
+   --help, -h         show help
+> ./sc clean --local
+This is a destructive operation. Are you sure you want to continue? You can su
+pply --dry-run to see what would be deleted without actually deleting anything
+────────────────────────────────────────────────────────────────────────────────
+> ./sc clean --help
+NAME:
+   sc clean - delete local branches associated with delivered stories
+
+USAGE:
+   sc clean [command options]
+
+OPTIONS:
+   --confirm, -c, -y  auto-confirm deletion, without prompting (default: false
+)
+   --dry-run          print out branches that would be deleted (default: false
+)
+   --local            delete local branches (default: true)
+   --remote           delete remote branches (default: false)
+   --help, -h         show help
+> ./sc clean --local
+This is a destructive operation. Are you sure you want to continue? You can su
+pply --dry-run to see what would be deleted without actually deleting anything
+────────────────────────────────────────────────────────────────────────────────
+> ./sc clean --help
+NAME:
+   sc clean - delete local branches associated with delivered stories
+
+USAGE:
+   sc clean [command options]
+
+OPTIONS:
+   --confirm, -c, -y  auto-confirm deletion, without prompting (default: false
+)
+   --dry-run          print out branches that would be deleted (default: false
+)
+   --local            delete local branches (default: true)
+   --remote           delete remote branches (default: false)
+   --help, -h         show help
+> ./sc clean --local
+This is a destructive operation. Are you sure you want to continue? You can su
+pply --dry-run to see what would be deleted without actually deleting anything
+────────────────────────────────────────────────────────────────────────────────
+> ./sc clean --help
+NAME:
+   sc clean - delete local branches associated with delivered stories
+
+USAGE:
+   sc clean [command options]
+
+OPTIONS:
+   --confirm, -c, -y  auto-confirm deletion, without prompting (default: false
+)
+   --dry-run          print out branches that would be deleted (default: false
+)
+   --local            delete local branches (default: true)
+   --remote           delete remote branches (default: false)
+   --help, -h         show help
+> ./sc clean --local
+This is a destructive operation. Are you sure you want to continue? You can su
+pply --dry-run to see what would be deleted without actually deleting anything
+────────────────────────────────────────────────────────────────────────────────
