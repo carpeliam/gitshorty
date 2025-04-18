@@ -7,37 +7,38 @@ go build -o e2e/sc .
 cd e2e
 eval "$(direnv export bash)"
 
+
+function test() {
+    type=$1
+    vhs "${type}.tape" --quiet
+    status=$?
+    cmp --print-bytes "${type}".ascii golden/"${type}".ascii
+    status=$?
+    return $status
+}
+
 # help
-vhs help.tape --quiet
-help_status=$?
-cmp help.ascii golden/help.ascii
+test "help"
 help_status=$?
 
 # tasks
 git checkout -b sample-story-with-tasks-sc-19
-vhs tasks.tape --quiet
+test "tasks"
 tasks_status=$?
 git checkout - --quiet
 git branch -d sample-story-with-tasks-sc-19
-cmp tasks.ascii golden/tasks.ascii
-tasks_status=$?
 
-# # clean
+# clean
 git branch completed-sc-22
-vhs clean.tape --quiet
+test "clean"
 clean_status=$?
 # git branch -d completed-sc-22
-cmp clean.ascii golden/clean.ascii
-clean_status=$?
 
 # mywork
 git branch sample-story-with-tasks-sc-19
-vhs mywork.tape --quiet
+test "mywork"
 mywork_status=$?
 git branch -d sample-story-with-tasks-sc-19
-cmp mywork.ascii golden/mywork.ascii
-mywork_status=$?
-
 
 rm sc
 rm *.ascii
