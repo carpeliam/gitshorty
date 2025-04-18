@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -u
+set -ux
 
 go build -o e2e/sc .
 
