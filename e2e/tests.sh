@@ -9,38 +9,41 @@ eval "$(direnv export bash)"
 
 
 function test() {
-    type=$1
+    local type=$1
+    if [ -f setup/"${type}".sh ]; then
+        ./setup/"${type}".sh setup
+    fi
     vhs "${type}.tape" --quiet
-    status=$?
+    local status=$?
     cmp --print-bytes "${type}".ascii golden/"${type}".ascii
-    status=$?
+    local status=$?
+    if [ -f setup/"${type}".sh ]; then
+        ./setup/"${type}".sh teardown
+    fi
+    if [ "$status" -eq 0 ]; then
+        rm "${type}".ascii
+    fi
     return $status
 }
 
-# help
-test "help"
-help_status=$?
-
-# tasks
-git checkout -b sample-story-with-tasks-sc-19
-test "tasks"
-tasks_status=$?
-git checkout - --quiet
-git branch -d sample-story-with-tasks-sc-19
-
-# clean
-git branch completed-sc-22
-test "clean"
-clean_status=$?
-# git branch -d completed-sc-22
-
-# mywork
-git branch sample-story-with-tasks-sc-19
-test "mywork"
-mywork_status=$?
-git branch -d sample-story-with-tasks-sc-19
+status=0
+if [ $# -eq 1 ]; then
+    tape=$1
+    echo "testing tape $tape"
+    test "$tape"
+    status=$?
+else
+    echo "testing all tapes"
+    # tapes=(*.tape) # this is currently flaky :(
+    tapes=(help.tape tasks.tape clean.tape mywork.tape)
+    for i in "${!tapes[@]}"; do
+        tape="${tapes[$i]%.*}"
+        test "${tape}"
+        tape_status=$?
+        status=$((status + tape_status * 2**i))
+    done
+fi
 
 rm sc
-rm *.ascii
 
-exit $(($help_status + $tasks_status * 2 + $clean_status * 4 + $mywork_status * 8))
+exit "$status"
