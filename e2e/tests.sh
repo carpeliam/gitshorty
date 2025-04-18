@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -u
 
 go build -o e2e/sc .
 
@@ -9,37 +9,37 @@ eval "$(direnv export bash)"
 
 # help
 vhs help.tape --quiet
-help_status=0
-cmp help.ascii golden/help.ascii || echo "failed help"
-cmp -s help.ascii golden/help.ascii || help_status=$?
+help_status=$?
+cmp help.ascii golden/help.ascii
+help_status=$?
 
 # tasks
 git checkout -b sample-story-with-tasks-sc-19
 vhs tasks.tape --quiet
+tasks_status=$?
 git checkout - --quiet
 git branch -d sample-story-with-tasks-sc-19
-tasks_status=0
-cmp tasks.ascii golden/tasks.ascii || echo "failed tasks"
-cmp -s tasks.ascii golden/tasks.ascii || tasks_status=$?
+cmp tasks.ascii golden/tasks.ascii
+tasks_status=$?
 
-# clean
+# # clean
 git branch completed-sc-22
 vhs clean.tape --quiet
+clean_status=$?
 # git branch -d completed-sc-22
-clean_status=0
-cmp clean.ascii golden/clean.ascii || echo "failed clean"
-cmp -s clean.ascii golden/clean.ascii || clean_status=$?
+cmp clean.ascii golden/clean.ascii
+clean_status=$?
 
 # mywork
 git branch sample-story-with-tasks-sc-19
 vhs mywork.tape --quiet
+mywork_status=$?
 git branch -d sample-story-with-tasks-sc-19
-mywork_status=0
-cmp mywork.ascii golden/mywork.ascii || echo "failed mywork"
-cmp -s mywork.ascii golden/mywork.ascii || mywork_status=$?
+cmp mywork.ascii golden/mywork.ascii
+mywork_status=$?
 
 
 rm sc
 rm *.ascii
 
-exit $(($help_status + $tasks_status + $clean_status + $mywork_status))
+exit $(($help_status + $tasks_status * 2 + $clean_status * 4 + $mywork_status * 8))

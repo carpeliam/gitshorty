@@ -63,7 +63,7 @@ Set Width 1200
 Set Height 600
 
 Type "./sc mywork --help" Enter
-Sleep 250ms
+Wait
 
 Type "./sc mywork" Enter
-Sleep 1s
+Wait

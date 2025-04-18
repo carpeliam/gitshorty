@@ -58,9 +58,9 @@
 Output clean.ascii
 
 Type "./sc clean --help" Enter
-Sleep 250ms
+Wait
 
 Type "./sc clean --local" Enter
-Sleep 250ms
+Wait+Screen /This is a destructive operation/
 Type "yes" Enter
-Sleep 1s
+Wait

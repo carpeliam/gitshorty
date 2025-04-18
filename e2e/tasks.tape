@@ -63,20 +63,21 @@ Set Width 1200
 Set Height 600
 
 Type "./sc tasks --help" Enter
-Sleep 250ms
+Wait
 
 Type "./sc tasks" Enter
-Sleep 750ms
+Wait+Screen /Do the laundry/
 Type "/laundry" Enter
-Sleep 750ms
+# Wait for "Cook dinner" to be filtered
+Sleep 250ms
 Space
-Sleep 750ms
+Wait+Screen /✓ Do the laundry/
 Enter
-Sleep 1s
+Wait
 
 Type "./sc tasks" Enter
-Sleep 750ms
+Wait+Screen /Do the laundry/
 Space
-Sleep 750ms
+Wait+Screen /• Do the laundry/
 Enter
-Sleep 1s
+Wait

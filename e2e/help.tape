@@ -63,4 +63,4 @@ Set Width 1200
 Set Height 600
 
 Type "./sc --help" Enter
-Sleep 1s
+Wait+Screen /sc - command-line client for Shortcut/
