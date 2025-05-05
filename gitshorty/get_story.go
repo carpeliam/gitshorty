@@ -2,6 +2,7 @@ package gitshorty
 
 import (
 	"log/slog"
+	"maps"
 	"regexp"
 	"strconv"
 
@@ -57,6 +58,37 @@ func (gs GitShorty) GetStoryByBranchName(branchName string) (*Story, error) {
 	return &wrappedStory, err
 }
 
+func (gs GitShorty) GetAcceptedStories() ([]Story, error) {
+	branches := append(
+		gs.repository.GetLocalBranchNames(),
+		gs.repository.GetRemoteBranchNames()...,
+	)
+	stories := make(map[int]Story)
+	for _, branch := range branches {
+		storyId, err := getStoryId(branch)
+		if err != nil || storyId == nil {
+			continue
+		}
+		story, ok := stories[*storyId]
+		if ok {
+			story.Branches = append(story.Branches, Branch{Name: branch})
+			stories[*storyId] = story
+			continue
+		}
+
+		s, _ := gs.GetStoryByBranchName(branch)
+		s.Branches = append(s.Branches, Branch{Name: branch})
+		stories[*storyId] = *s
+	}
+	acceptedStories := []Story{}
+	for story := range maps.Values(stories) {
+		if story.Completed {
+			acceptedStories = append(acceptedStories, story)
+		}
+	}
+	return acceptedStories, nil
+}
+
 func (gs GitShorty) GetMyStories() ([]Story, error) {
 	localBranches := gs.repository.GetLocalBranchNames()
 	remoteBranches := gs.repository.GetRemoteBranchNames()
@@ -106,6 +138,7 @@ func getStoryId(branchName string) (*int, error) {
 func wrapStory(story sc.Story) Story {
 	return Story{
 		Id:        story.Id,
+		Name:      story.Name,
 		AppUrl:    story.AppUrl,
 		Completed: story.Completed,
 		Tasks:     wrapTasks(story.Tasks),

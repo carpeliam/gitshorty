@@ -22,9 +22,9 @@ var _ = Describe("Getting stories", func() {
 			}
 			gitshorty := NewGitShorty(mockGitRepo, mockShortcutClient)
 
-			story, error := gitshorty.GetStoryByBranchName("coolwhip-sc-123")
+			story, err := gitshorty.GetStoryByBranchName("coolwhip-sc-123")
 
-			Expect(error).To(BeNil())
+			Expect(err).To(BeNil())
 			Expect(story.Id).To(BeEquivalentTo(123))
 		})
 	})
@@ -38,10 +38,49 @@ var _ = Describe("Getting stories", func() {
 			}
 			gitshorty := NewGitShorty(&support.MockGitRepository{}, mockShortcutClient)
 
-			story, error := gitshorty.GetStoryByBranchName("coolwhip-sc-123")
+			story, err := gitshorty.GetStoryByBranchName("coolwhip-sc-123")
 
-			Expect(error).To(BeNil())
+			Expect(err).To(BeNil())
 			Expect(story.Id).To(BeEquivalentTo(123))
+		})
+	})
+
+	Describe("GetAcceptedStories", func() {
+		It("gets stories and their branches that have been completed", func() {
+			mockGitRepo := &support.MockGitRepository{
+				LocalBranchNames: []string{
+					"gitshorty-sc-123",
+					"gitshorty-sc-456",
+					"main",
+					"dev",
+				},
+				RemoteBranchNames: []string{
+					"origin/gitshorty-sc-123",
+					"origin/gitshorty-sc-456",
+					"origin/main",
+				},
+			}
+			mockShortcutClient := &support.MockShortcutClient{
+				Stories: map[int]sc.Story{
+					123: {Id: 123, Name: "All's well that ends well", Completed: true},
+					456: {Id: 456, Completed: false},
+				},
+			}
+			gitshorty := NewGitShorty(mockGitRepo, mockShortcutClient)
+
+			stories, err := gitshorty.GetAcceptedStories()
+			Expect(err).To(BeNil())
+			Expect(stories).To(HaveLen(1))
+			Expect(stories[0]).To(Equal(Story{
+				Id:        123,
+				Completed: true,
+				Name:      "All's well that ends well",
+				Tasks:     []Task{},
+				Branches: []Branch{
+					{Name: "gitshorty-sc-123"},
+					{Name: "origin/gitshorty-sc-123"},
+				}},
+			))
 		})
 	})
 
@@ -58,10 +97,11 @@ var _ = Describe("Getting stories", func() {
 			}
 			gitshorty := NewGitShorty(mockGitRepo, mockShortcutClient)
 
-			stories, error := gitshorty.GetMyStories()
-			Expect(error).To(BeNil())
+			stories, err := gitshorty.GetMyStories()
+			Expect(err).To(BeNil())
 			Expect(stories).To(HaveLen(1))
 			Expect(stories[0]).To(Equal(Story{Id: 123, Name: "Deliverance", Branches: []Branch{{Name: "deliver-sc-123"}, {Name: "origin/deliver-sc-123"}}}))
 		})
 	})
+	It("also handles errors", Pending)
 })
