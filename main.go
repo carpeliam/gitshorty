@@ -1,16 +1,16 @@
 package main
 
 import (
-	"errors"
+	// "errors"
 	"fmt"
 	"log"
 	"log/slog"
 	"os"
+	"slices"
 	"strings"
 
-	"github.com/Songmu/prompter"
+	// "github.com/Songmu/prompter"
 	"github.com/carpeliam/gitshorty/browse"
-	"github.com/carpeliam/gitshorty/clean"
 	"github.com/carpeliam/gitshorty/git"
 	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/shortcut"
@@ -86,27 +86,51 @@ func main() {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					if !ctx.Bool("local") && !ctx.Bool("remote") {
-						return errors.New("must specify at least one of --local or --remote")
-					}
-					if !ctx.Bool("dry-run") && !ctx.Bool("confirm") {
-						shouldContinue := prompter.YesNo("This is a destructive operation. Are you sure you want to continue? You can supply --dry-run to see what would be deleted without actually deleting anything, or --confirm to skip this prompt in the future.", false)
-						if !shouldContinue {
-							return nil
-						}
-					}
-					git := git.NewRepository()
-					shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
-					deletedBranches, err := clean.CleanBranches(git, shortcutClient, clean.CleanOpts{
-						DryRun:                ctx.Bool("dry-run"),
-						IncludeLocalBranches:  ctx.Bool("local"),
-						IncludeRemoteBranches: ctx.Bool("remote"),
-					})
-					if deletedBranches != nil {
-						fmt.Printf("Deleted branches: %s\n", strings.Join(deletedBranches, ", "))
-						return nil
-					}
+					// if !ctx.Bool("local") && !ctx.Bool("remote") {
+					// 	return errors.New("must specify at least one of --local or --remote")
+					// }
+					// if !ctx.Bool("dry-run") && !ctx.Bool("confirm") {
+					// 	shouldContinue := prompter.YesNo("This is a destructive operation. Are you sure you want to continue? You can supply --dry-run to see what would be deleted without actually deleting anything, or --confirm to skip this prompt in the future.", false)
+					// 	if !shouldContinue {
+					// 		return nil
+					// 	}
+					// }
+					// git := git.NewRepository()
+					// shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
+
+					sc := newGitShorty(ctx.String("api-token"))
+					stories, err := sc.GetAcceptedStories()
+
+					nms := nestedMultiSelect(stories...)
+					nms.Run()
+
+					// options := make([]huh.Option[int64], len(stories))
+					// for i, story := range stories {
+					// 	options[i] = huh.NewOption(story.Name, story.Id).Selected(false)
+					// }
+					// x := huh.NewMultiSelect[int64]().Options(options...).Title("Press SPACE to toggle, ENTER to submit, '/' to filter")
+
+					// x.Run()
+
+					// var values []int64
+					// if err = x.Value(&values).Run(); err != nil {
+					// 	return err
+					// } else {
+					// 	fmt.Printf("%#v\n", values)
+					// }
+
 					return err
+
+					// deletedBranches, err := clean.CleanBranches(git, shortcutClient, clean.CleanOpts{
+					// 	DryRun:                ctx.Bool("dry-run"),
+					// 	IncludeLocalBranches:  ctx.Bool("local"),
+					// 	IncludeRemoteBranches: ctx.Bool("remote"),
+					// })
+					// if deletedBranches != nil {
+					// 	fmt.Printf("Deleted branches: %s\n", strings.Join(deletedBranches, ", "))
+					// 	return nil
+					// }
+					// return err
 				},
 			},
 			{
@@ -175,6 +199,35 @@ func main() {
 
 func newGitShorty(apiToken string) gitshorty.GitShorty {
 	return gitshorty.NewGitShorty(git.NewRepository(), shortcut.NewShortcutClient(apiToken))
+}
+
+type NestedMultiSelect struct {
+	stories []gitshorty.Story
+}
+
+func (nms NestedMultiSelect) Run() error {
+	selections := []int{1}
+	// staticSelections := []int{1}
+	// story0 := nms.stories[0]
+	// story1 := nms.stories[1]
+
+	multiSelect0 := huh.NewMultiSelect[int]().Value(&selections).OptionsFunc(func() []huh.Option[int] {
+		opt1 := huh.NewOption("parent", 1).Selected(slices.Contains(selections, 1))
+		opt2 := huh.NewOption(" first child", 2)  // .Selected(slices.Contains(selections, 1))
+		opt3 := huh.NewOption(" second child", 3) //.Selected(slices.Contains(selections, 1))
+		options := make([]huh.Option[int], 3)
+		options[0] = opt1
+		options[1] = opt2
+		options[2] = opt3
+		return options
+	}, selections) //.Title("yo")
+	multiSelect0.Run()
+
+	return nil
+}
+
+func nestedMultiSelect(stories ...gitshorty.Story) NestedMultiSelect {
+	return NestedMultiSelect{stories: stories}
 }
 
 func taskListStatic(tasks []gitshorty.Task) []string {
