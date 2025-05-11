@@ -6,7 +6,6 @@ import (
 	"log"
 	"log/slog"
 	"os"
-	"slices"
 	"strings"
 
 	// "github.com/Songmu/prompter"
@@ -15,13 +14,99 @@ import (
 	"github.com/carpeliam/gitshorty/gitshorty"
 	"github.com/carpeliam/gitshorty/shortcut"
 	"github.com/carpeliam/gitshorty/tasks"
+	"github.com/carpeliam/gitshorty/ui"
 	"github.com/carpeliam/gitshorty/version"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 	"github.com/urfave/cli/v2"
 )
 
+// type model struct {
+//     // choices  []string           // items on the to-do list
+// 	stories []gitshorty.Story
+//     cursor   int                // which to-do list item our cursor is pointing at
+//     selected map[int]struct{}   // which to-do items are selected
+// 	input *huh.MultiSelect[int64]
+// 	form   *huh.Form
+// }
+
+// func storiesToOptions(_stories []gitshorty.Story) *huh.MultiSelect[int64] {
+// 	// options := make([]huh.Option[int64], len(stories))
+// 	// for i, story := range stories {
+// 	// 	options[i] = huh.NewOption(story.Name, story.Id).Selected(false)
+// 	// }
+// 	options := huh.NewOptions[int64](1, 2, 3)
+// 	return huh.NewMultiSelect[int64]().Key("opts").Options(options...).Title("bam")
+// }
+
+// func initialModel(stories ...gitshorty.Story) model {
+// 	return model{
+// 		// Our to-do list is a grocery list
+// 		// choices:  []string{"Buy carrots", "Buy celery", "Buy kohlrabi"},
+// 		stories: stories,
+
+// 		// A map which indicates which choices are selected. We're using
+// 		// the  map like a mathematical set. The keys refer to the indexes
+// 		// of the `choices` slice, above.
+
+// 		selected: make(map[int]struct{}),
+
+// 		input: storiesToOptions(stories),
+// 		form: huh.NewForm(huh.NewGroup(storiesToOptions(stories))),
+// 	}
+// }
+// func (m model) Init() tea.Cmd {
+//     // Just return `nil`, which means "no I/O right now, please."
+//     return m.form.Init()
+// }
+
+// func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+// 	slog.Info("cmd rcvd", "msg", msg)
+// 	switch msg := msg.(type) {
+// 	// case tea.WindowSizeMsg:
+// 	// 	m.width = min(msg.Width, maxWidth) - m.styles.Base.GetHorizontalFrameSize()
+
+// 	case tea.KeyMsg:
+// 		slog.Info("msg.String", "s", msg.String())
+// 		switch msg.String() {
+// 		// case "ctrl+c":
+// 		// 	return m,
+// 		case "esc", "q":
+// 			return m, tea.Quit
+// 		}
+// 	}
+
+// 	var cmds []tea.Cmd
+
+// 	// Process the form
+// 	form, cmd := m.form.Update(msg)
+// 	f, ok := form.(*huh.Form)
+// 	if ok {
+// 		m.form = f
+// 		cmds = append(cmds, cmd)
+// 	}
+// 	slog.Info("success", "ok", ok, "f", f, "cmd", cmd, "opts", f.Get("opts"))
+// 	// form, cmd := m.form.Update(msg)
+// 	// if f, ok := form.(*huh.Form); ok {
+// 	// 	m.form = f
+// 	// 	cmds = append(cmds, cmd)
+// 	// }
+
+// 	// m.input.
+// 	if m.form.State == huh.StateCompleted {
+// 		// Quit when the form is done.
+// 		cmds = append(cmds, tea.Quit)
+// 	}
+
+// 	return m, tea.Batch(cmds...)
+// }
+
+// func (m model) View() string {
+// 	return m.form.View()
+// }
+
 func main() {
-	slog.SetLogLoggerLevel(slog.LevelError)
+	slog.SetLogLoggerLevel(slog.LevelDebug)
 
 	app := &cli.App{
 		Name:                   "sc",
@@ -97,12 +182,28 @@ func main() {
 					// }
 					// git := git.NewRepository()
 					// shortcutClient := shortcut.NewShortcutClient(ctx.String("api-token"))
+					f, err := tea.LogToFile("debug.log", "debug")
+					if err != nil {
+						fmt.Println("fatal:", err)
+						os.Exit(1)
+					}
+					slog.Info("logging yeah")
 
-					sc := newGitShorty(ctx.String("api-token"))
-					stories, err := sc.GetAcceptedStories()
+					// sc := newGitShorty(ctx.String("api-token"))
+					// stories, _ := sc.GetAcceptedStories()
+					stories := []gitshorty.Story{
+						{Id: 1, Name: "A story", Branches: []gitshorty.Branch{
+							{Name: "test1-sc-1"},
+							{Name: "test2-sc-1"},
+						}},
+						{Id: 2, Name: "Another story", Branches: []gitshorty.Branch{}},
+					}
 
-					nms := nestedMultiSelect(stories...)
-					nms.Run()
+					// nms := nestedMultiSelect(stories...)
+					// nms.Run()
+					p := tea.NewProgram(ui.NewModel(stories))
+
+					_, err = p.Run()
 
 					// options := make([]huh.Option[int64], len(stories))
 					// for i, story := range stories {
@@ -118,6 +219,7 @@ func main() {
 					// } else {
 					// 	fmt.Printf("%#v\n", values)
 					// }
+					defer f.Close()
 
 					return err
 
@@ -201,34 +303,9 @@ func newGitShorty(apiToken string) gitshorty.GitShorty {
 	return gitshorty.NewGitShorty(git.NewRepository(), shortcut.NewShortcutClient(apiToken))
 }
 
-type NestedMultiSelect struct {
-	stories []gitshorty.Story
-}
-
-func (nms NestedMultiSelect) Run() error {
-	selections := []int{1}
-	// staticSelections := []int{1}
-	// story0 := nms.stories[0]
-	// story1 := nms.stories[1]
-
-	multiSelect0 := huh.NewMultiSelect[int]().Value(&selections).OptionsFunc(func() []huh.Option[int] {
-		opt1 := huh.NewOption("parent", 1).Selected(slices.Contains(selections, 1))
-		opt2 := huh.NewOption(" first child", 2)  // .Selected(slices.Contains(selections, 1))
-		opt3 := huh.NewOption(" second child", 3) //.Selected(slices.Contains(selections, 1))
-		options := make([]huh.Option[int], 3)
-		options[0] = opt1
-		options[1] = opt2
-		options[2] = opt3
-		return options
-	}, selections) //.Title("yo")
-	multiSelect0.Run()
-
-	return nil
-}
-
-func nestedMultiSelect(stories ...gitshorty.Story) NestedMultiSelect {
-	return NestedMultiSelect{stories: stories}
-}
+// func nestedMultiSelect(stories ...gitshorty.Story) model {
+// 	return initialModel(stories...)
+// }
 
 func taskListStatic(tasks []gitshorty.Task) []string {
 	taskStrings := make([]string, len(tasks))
