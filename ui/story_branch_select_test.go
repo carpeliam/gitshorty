@@ -48,17 +48,21 @@ var _ = Describe("StoryBranchSelect", func() {
 				{Name: "b1-sc-1"},
 				{Name: "b2-sc-1"},
 			}},
-			{Id: 2, Name: "Story 2"},
+			{Id: 2, Name: "Story 2", Branches: []gitshorty.Branch{
+				{Name: "b1-sc-2"},
+			}},
 		}
 		model := NewModel(stories)
-		m, _ := model.Update(keys(rune(tea.KeySpace)))
-		display := ansi.Strip(m.View())
+		model.Update(tea.WindowSize())
+		// m, _ := model.Update(keys(rune(tea.KeySpace)))
+		display := ansi.Strip(model.View())
 
 		// Expect(display).To(Equal(storySelected(stories)))
 		Expect(display).To(ContainSubstring("✓ [sc-1] Story 1"))
 		Expect(display).To(ContainSubstring("✓  b1-sc-1"))
 		Expect(display).To(ContainSubstring("✓  b2-sc-1"))
 		Expect(display).To(ContainSubstring("• [sc-2] Story 2"))
+		Expect(display).To(ContainSubstring("•  b1-sc-2"))
 	})
 
 })

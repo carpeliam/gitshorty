@@ -187,7 +187,6 @@ func main() {
 						fmt.Println("fatal:", err)
 						os.Exit(1)
 					}
-					slog.Info("logging yeah")
 
 					// sc := newGitShorty(ctx.String("api-token"))
 					// stories, _ := sc.GetAcceptedStories()
@@ -199,26 +198,10 @@ func main() {
 						{Id: 2, Name: "Another story", Branches: []gitshorty.Branch{}},
 					}
 
-					// nms := nestedMultiSelect(stories...)
-					// nms.Run()
-					p := tea.NewProgram(ui.NewModel(stories))
+					m, err := tea.NewProgram(ui.NewModel(stories)).Run()
+					branches := m.(*ui.Model).Branches
+					slog.Info(fmt.Sprint(branches))
 
-					_, err = p.Run()
-
-					// options := make([]huh.Option[int64], len(stories))
-					// for i, story := range stories {
-					// 	options[i] = huh.NewOption(story.Name, story.Id).Selected(false)
-					// }
-					// x := huh.NewMultiSelect[int64]().Options(options...).Title("Press SPACE to toggle, ENTER to submit, '/' to filter")
-
-					// x.Run()
-
-					// var values []int64
-					// if err = x.Value(&values).Run(); err != nil {
-					// 	return err
-					// } else {
-					// 	fmt.Printf("%#v\n", values)
-					// }
 					defer f.Close()
 
 					return err
