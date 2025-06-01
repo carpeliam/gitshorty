@@ -9,41 +9,74 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-type selection struct {
-	name     string
-	branch   gitshorty.Branch
-	children []*selection
+type selection interface {
+	display() string
+	children() []selection
+}
+
+type branchSelection struct {
+	branch *gitshorty.Branch
+}
+
+func (bs branchSelection) display() string {
+	return fmt.Sprintf(" %s", bs.branch.Name)
+}
+func (bs branchSelection) children() []selection {
+	return []selection{}
+}
+
+type storySelection struct {
+	story     *gitshorty.Story
+	_children []selection
+}
+
+func (ss storySelection) display() string {
+	return fmt.Sprintf("[sc-%d] %s", ss.story.Id, ss.story.Name)
+}
+func (ss *storySelection) children() []selection {
+	if ss._children == nil {
+		// need to memoize because it's important we refer to the same objects in memory
+		ss._children = make([]selection, len(ss.story.Branches))
+		for i, branch := range ss.story.Branches {
+			ss._children[i] = branchSelection{branch: &branch}
+		}
+	}
+	return ss._children
 }
 
 type Model struct {
 	cursor     int
-	input      *huh.MultiSelect[*selection]
+	input      *huh.MultiSelect[selection]
 	form       *huh.Form
-	selections []*selection
-	acc        huh.Accessor[[]*selection]
+	selections []selection
+	acc        huh.Accessor[[]selection]
 	Branches   []gitshorty.Branch
 }
 
+func (m Model) options() []huh.Option[selection] {
+	options := make([]huh.Option[selection], len(m.selections))
+	for i, sel := range m.selections {
+		options[i] = huh.NewOption(sel.display(), sel)
+	}
+	return options
+}
+
 func NewModel(stories []gitshorty.Story) Model {
-	selections := []*selection{}
+	selections := []selection{}
 	for _, story := range stories {
 		if len(story.Branches) == 0 {
 			continue
 		}
-		sel := selection{name: fmt.Sprintf("[sc-%d] %s", story.Id, story.Name), children: make([]*selection, len(story.Branches))}
-		selections = append(selections, &sel)
-		for i, branch := range story.Branches {
-			sel.children[i] = &selection{name: fmt.Sprintf(" %s", branch.Name), branch: branch}
-			selections = append(selections, sel.children[i])
-		}
-
+		sel := &storySelection{story: &story}
+		selections = append(append(selections, sel), sel.children()...)
 	}
-	acc := &huh.EmbeddedAccessor[[]*selection]{}
-	input := huh.NewMultiSelect[*selection]().Accessor(acc).Options(selectionsToOptions(selections)...).Filterable(false /* 😭 */).Title("abc")
+
+	acc := &huh.EmbeddedAccessor[[]selection]{}
+	input := huh.NewMultiSelect[selection]().Accessor(acc).Filterable(false /* 😭 */).Title("abc")
 	form := huh.NewForm(huh.NewGroup(input))
 	form.SubmitCmd = tea.Quit
 	form.CancelCmd = tea.Quit
-	return Model{
+	model := Model{
 		cursor:     0,
 		input:      input,
 		form:       form,
@@ -51,6 +84,8 @@ func NewModel(stories []gitshorty.Story) Model {
 		acc:        acc,
 		Branches:   []gitshorty.Branch{},
 	}
+	input.Options(model.options()...)
+	return model
 }
 
 func (m Model) Init() tea.Cmd {
@@ -74,23 +109,24 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			selections := m.acc.Get()
 			isParentSelected := !slices.Contains(selections, selectedOption)
 			if isParentSelected {
-				for _, child := range selectedOption.children {
+				for _, child := range selectedOption.children() {
 					if !slices.Contains(selections, child) {
 						selections = append(selections, child)
 					}
 				}
 			} else {
-				selections = slices.DeleteFunc(selections, func(s *selection) bool {
-					return slices.Contains(selectedOption.children, s)
+				selections = slices.DeleteFunc(selections, func(s selection) bool {
+					return slices.Contains(selectedOption.children(), s)
 				})
 			}
 			m.acc.Set(selections)
-			m.input.Options(selectionsToOptions(m.selections)...)
+			m.input.Options(m.options()...)
 		case tea.KeyEnter:
 			branches := []gitshorty.Branch{}
 			for _, selection := range m.acc.Get() {
-				if (selection.branch != gitshorty.Branch{}) {
-					branches = append(branches, selection.branch)
+				switch s := selection.(type) {
+				case branchSelection:
+					branches = append(branches, *s.branch)
 				}
 			}
 			m.Branches = branches
@@ -112,12 +148,4 @@ func update(m Model, msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	return m.form.View()
-}
-
-func selectionsToOptions(selections []*selection) []huh.Option[*selection] {
-	options := make([]huh.Option[*selection], len(selections))
-	for i, sel := range selections {
-		options[i] = huh.NewOption(sel.name, sel)
-	}
-	return options
 }

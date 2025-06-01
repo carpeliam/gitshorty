@@ -199,7 +199,7 @@ func main() {
 					}
 
 					m, err := tea.NewProgram(ui.NewModel(stories)).Run()
-					branches := m.(*ui.Model).Branches
+					branches := m.(ui.Model).Branches
 					slog.Info(fmt.Sprint(branches))
 
 					defer f.Close()
