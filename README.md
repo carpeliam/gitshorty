@@ -10,12 +10,13 @@ USAGE:
    sc [global options] command [command options]
 
 VERSION:
-   0.0.3
+   0.0.4
 
 COMMANDS:
    browse   open story associated with current branch in web browser
    clean    delete local branches associated with delivered stories
    tasks    display tasks associated with the current branch's story
+   mywork   display branches associated with the current user's stories
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
