@@ -32,6 +32,20 @@ GLOBAL OPTIONS:
 brew install carpeliam/brew/gitshorty
 ```
 
+### Via Nix
+If you have Nix with flakes enabled, you can install gitshorty in several ways:
+
+```sh
+# Install to your profile
+nix profile install github:carpeliam/gitshorty
+
+# Run without installing
+nix run github:carpeliam/gitshorty -- --help
+
+# Use in a flake-based project (add to flake.nix inputs)
+inputs.gitshorty.url = "github:carpeliam/gitshorty";
+```
+
 ### From source
 The source is at least compatible with Go v1.23.1, and can be built as follows:
 ```
